@@ -30,22 +30,15 @@ def address(soup):
     '''
     '''
     #address
+
     tags = soup.find_all('p', class_="css-1ccncw")
     return tags[0].text
 
-def amenities(soup):
+def website(soup):
     '''
     '''
-    tags = soup.find_all('span', class_="css-1h7ysrc")
-    return tags
 
-    ###????? yo this is kinda weird
-
-
-
-
-
-
-
-
-
+    tags = soup.find_all('a', class_="css-10y60kr")
+    for tag in tags:
+        if tag.has_attr('href'):
+            print(tag.get('href'))
