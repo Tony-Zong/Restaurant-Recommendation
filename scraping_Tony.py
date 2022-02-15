@@ -12,9 +12,9 @@ def scrape_name_rating_price_tag(soup):
 
     # restaurant name
     name = soup.find_all('h1', class_="css-1x9iesk")[0].text
+    # number of reviews
     tags = soup.find_all('span', class_="css-1yy09vp")
     num_review_str = tags[0].text
-    # number of reviews
     num_review = re.search('^[0-9]+', num_review_str)[0]
     # hours
     time = tags[-1].text
