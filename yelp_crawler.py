@@ -5,10 +5,13 @@ import requests
 
 
 # Produce list of zipcodes from CSV
-zipcodes = []
-with open('cook_zips.csv', newline = '') as f:
-    for row in csv.reader(f):
-        zipcodes.append(row[0])
+def zipcodes(csv):
+    '''
+    '''
+    zipcodes = []
+    with open('cook_zips.csv', newline = '') as f:
+        for row in csv.reader(f):
+            zipcodes.append(row[0])
 
 
 # Search Yelp for every restaurant in every zipcode
@@ -33,6 +36,7 @@ for zipcode in zipcodes:
 
 
 # Write to CSV
+
 with open('restaurant_urls.csv', 'w') as file:
     write = csv.writer(file)
     for restaurant_url in restaurant_urls:
