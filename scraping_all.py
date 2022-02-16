@@ -57,7 +57,8 @@ def get_info(soup, rest_dic):
     price_tags = soup.find_all('span', class_="css-oyv5ea")
     for price_tag in price_tags:
         if '$' in price_tag.text:
-            price = len(price_tag.text)
+            price_text = price_tag.text.strip()
+            price = len(price_text)
 
     rest_dic[name] = rest_dic.get(name, {})
     rest_dic[name] = {'phone': phoneret,
