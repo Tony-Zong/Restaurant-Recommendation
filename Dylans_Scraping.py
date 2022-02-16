@@ -37,8 +37,9 @@ def address(soup):
 def website(soup):
     '''
     '''
-
-    tags = soup.find_all('a', class_="css-10y60kr")
-    for tag in tags:
-        if tag.has_attr('href'):
-            print(tag.get('href'))
+    web = soup.find_all('a', class_="css-10y60kr")
+    webret = web[2].get('href')
+    if len(webret) == 0 or 'map' in webret:
+        return -1
+    return webret
+    
