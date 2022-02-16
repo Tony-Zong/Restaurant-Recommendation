@@ -17,7 +17,7 @@ def get_zipcodes(csv_file):
     return zipcodes
     
 # Search Yelp for every restaurant in every zipcode
-base_search_url = 'https://www.yelp.com/search?cflt=restaurants&find_loc=Chicago%2C+IL+'
+# base_search_url = 'https://www.yelp.com/search?cflt=restaurants&find_loc=Chicago%2C+IL+'
 
 def urls(starting_url, zipcodes):
     '''
