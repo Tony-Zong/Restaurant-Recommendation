@@ -32,14 +32,15 @@ def urls(starting_url, zipcodes):
 
         while(not reached_last_page):
             req = requests.get(search_url + '&start=' + str(start_page))
-            #print(req.content)
             soup = BeautifulSoup(req.content, 'html.parser')
             biz_tags = soup.find_all('div', class_ = 'businessName__09f24__EYSZE display--inline-block__09f24__fEDiJ border-color--default__09f24__NPAKY')
             if biz_tags:
                 for biz_tag in biz_tags:
                     url = biz_tag.find('a')['href']
-                    restaurant_urls.add(url)
-                    #print(url)
+                    # the restaurant urls are all relative ones
+                    if 'http' not in url:
+                        url = url.split('?')[0]
+                        restaurant_urls.add(url)
             else:
                 reached_last_page = True
     return restaurant_urls
