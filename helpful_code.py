@@ -6,6 +6,8 @@ import bs4
 from bs4 import BeautifulSoup
 import csv
 import requests
+import scraping_all as sa
+import scraping_final as sf
 
 url1 = "https://www.yelp.com/biz/italian-fiesta-pizzeria-dolton-dolton"
 r = requests.get(url1)
@@ -32,7 +34,10 @@ r5 = requests.get(url5)
 html_doc5 = r5.text.encode('utf-8')
 soup5 = bs4.BeautifulSoup(html_doc5, "html5lib")
 
-
+url6 = "https://www.yelp.com/biz/la-exclusiva-la-michoacana-cicero-2"
+r6 = requests.get(url6)
+html_doc6 = r6.text.encode('utf-8')
+soup6 = bs4.BeautifulSoup(html_doc6, "html5lib")
 
 ####
 import pickle 
