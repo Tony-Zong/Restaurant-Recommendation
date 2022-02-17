@@ -44,7 +44,7 @@ def get_info(soup):
     webs = soup.find_all('a', class_="css-10y60kr")
     if len(webs) >= 3:
         potential = webs[2].get('href')
-        if potential is not None and 'biz' in potential:
+        if potential is not None and 'biz' in potential: 
             website = potential
 
     # number of reviews
