@@ -2,7 +2,7 @@ from bs4 import BeautifulSoup
 import requests
 import re
 
-def get_info(soup, rest_dic):
+def get_info(soup):
     '''
 
     '''
@@ -60,18 +60,17 @@ def get_info(soup, rest_dic):
             price_text = price_tag.text.strip()
             price = len(price_text)
 
-    rest_dic[name] = rest_dic.get(name, {})
-    rest_dic[name] = {'phone': phoneret,
-                      'address': addressret,
-                      'website': webret,
-                      'num_review': num_review,
-                      'hours': time,
-                      'tags': rest_tags,
-                      'rating': rating_str,
-                      'price': price,
-                      'words': words_set}
+    rest_dic = {'phone': phoneret,
+                'address': addressret,
+                'website': webret,
+                'num_review': num_review,
+                'hours': time,
+                'tags': rest_tags,
+                'rating': rating_str,
+                'price': price,
+                'words': words_set}
 
-    return rest_dic
+    return (name, rest_dic)
 
-# need to add: indexer, amenities
+# need to add: amenities
     
