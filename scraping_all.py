@@ -42,10 +42,10 @@ def get_info(soup):
     # restaurant website
     website = 'Not available'
     webs = soup.find_all('a', class_="css-10y60kr")
-    if len(webs) >= 2:
+    if len(webs) >= 3:
         potential = webs[2].get('href')
         if potential is not None and 'biz' in potential:
-            website = potential[0]
+            website = potential
 
     # number of reviews
     num_review = -1
