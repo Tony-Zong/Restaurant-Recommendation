@@ -8,7 +8,11 @@ def get_info(soup):
     '''
 
     # restaurant name
-    name = soup.find_all('h1', class_="css-1x9iesk")[0].text
+    name = soup.find_all('h1', class_="css-1x9iesk")
+    # this is used for detecting whether the Yelp site is blocking us
+    if len(name) == 0:
+        return (None, None)
+    name = name[0].text
 
     # indexer for restaurant name
     lower_name = name.lower()
@@ -16,18 +20,31 @@ def get_info(soup):
     words_set = set(name_words)
 
     # phone number
-    phone = soup.find_all('p', class_="css-1h7ysrc")
-    phoneret = phone[-2].text
+    phone = -1
+    phone_tag = soup.find_all('p', class_="css-1h7ysrc")
+    if len(phone_tag) >= 2:
+        if '(' in phone_tag[-2].text:
+            phone = phone_tag[-2].text
+        elif '(' in phone_tag[-1].text:
+            phone = phone_tag[-1].text
     
     # address
-    address = soup.find_all('p', class_="css-1ccncw")
-    addressret = address[0].text
+    address = 'Not available'
+    address_tag = soup.find_all('p', class_="css-1ccncw")
+    if len(address_tag) != 0:
+        address = address_tag[0].text
+    else:
+        address_tag = soup.find_all('span', class_="raw__09f24__T4Ezm")
+        if len(address_tag) >= 2:
+            if 'Chicago' in address_tag[1].text:
+                address = address_tag[0].text + ' ' + address_tag[1].text
 
+    ##########################################
     # restaurant website
     web = soup.find_all('a', class_="css-10y60kr")
     webret = web[2].get('href')
     if len(webret) == 0 or 'map' in webret:
-        webret = -1
+        webret = 'Not available'
 
     # number of reviews
     tags = soup.find_all('span', class_="css-1yy09vp")
@@ -37,7 +54,7 @@ def get_info(soup):
     # hours
     time = tags[-1].text
     if 'AM' not in time or 'PM' not in time:
-        time = -1 
+        time = 'Unkown'
 
     # restaurant tags
     rest_tags = set()
@@ -49,8 +66,9 @@ def get_info(soup):
                 rest_tags.add(tag_text)
 
     # rating
-    rating_tag = soup.find_all('div', class_="css-i-stars__09f24__foihJ i-stars--large-4__09f24__jGrzl border-color--default__09f24__NPAKY overflow--hidden__09f24___ayzG")
-    rating_str = re.findall('"([\w\s]+) star rating', str(soup))[0]
+    # rating_tag = soup.find_all('div', class_="css-i-stars__09f24__foihJ i-stars--large-4__09f24__jGrzl border-color--default__09f24__NPAKY overflow--hidden__09f24___ayzG")
+    rating_str = re.findall('"([\w\s.]+) star rating', str(soup))[0]
+    rating = float(rating_str)
 
     # price
     price = -1
@@ -60,13 +78,13 @@ def get_info(soup):
             price_text = price_tag.text.strip()
             price = len(price_text)
 
-    rest_dic = {'phone': phoneret,
-                'address': addressret,
+    rest_dic = {'phone': phone,
+                'address': address,
                 'website': webret,
                 'num_review': num_review,
                 'hours': time,
                 'tags': rest_tags,
-                'rating': rating_str,
+                'rating': rating,
                 'price': price,
                 'words': words_set}
 

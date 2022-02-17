@@ -5,12 +5,11 @@ from bs4 import BeautifulSoup
 import csv
 import requests
 
-def scrape(csv_filename):
+def scrape(csv_filename, all_rest = {}):
     '''
     '''
     
-    current_id = 1
-    all_rest = {}
+    #current_id = 1
     csv_read = open(csv_filename, 'r')
     reader = csv.reader(csv_read)
     for url in reader:
@@ -19,9 +18,14 @@ def scrape(csv_filename):
         html_doc = r.text.encode('utf-8')
         soup = bs4.BeautifulSoup(html_doc, "html5lib")
         rest_name, rest_dict = sa.get_info(soup)
-        rest_id = current_id
-        current_id += 1
+        if rest_name is None:
+            return None
+        #rest_id = current_id
+        #rest_dict['rest_id'] = rest_dict.get('rest_id', 0)
+        #rest_dict['rest_id'] = rest_id
+        #current_id += 1
         all_rest[rest_name] = all_rest.get(rest_name, {})
         all_rest[rest_name] = rest_dict
+        print(rest_name)
     
-    return all_rest
+    #return all_rest
