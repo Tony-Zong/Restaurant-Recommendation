@@ -10,13 +10,20 @@ import random
 def scrape(csv_filename, all_rest = {}):
     '''
     '''
-    
-    #current_id = 1
+
+    # use cnt to add another level of random stops
+    cnt = 1
     csv_read = open(csv_filename, 'r')
     reader = csv.reader(csv_read)
     for url in reader:
+        # use cnt to add another level of random stops
+        if cnt % 15 == 0:
+            time.sleep(random.random()*10)
+        if cnt % 25 == 0:
+            time.sleep(random.random()*15)
         complete_url = 'https://www.yelp.com' + url[0]
-        rand_num = random.random()*20
+        rand_num = random.random()*15 + 5
+        # random time interval between each consecutive requests
         time.sleep(rand_num)
         r = requests.get(complete_url)
         html_doc = r.text.encode('utf-8')
@@ -24,12 +31,8 @@ def scrape(csv_filename, all_rest = {}):
         rest_name, rest_dict = sa.get_info(soup)
         if rest_name is None:
             return None
-        #rest_id = current_id
-        #rest_dict['rest_id'] = rest_dict.get('rest_id', 0)
-        #rest_dict['rest_id'] = rest_id
-        #current_id += 1
         all_rest[rest_name] = all_rest.get(rest_name, {})
         all_rest[rest_name] = rest_dict
+        cnt += 1
         print(rest_name)
-    
-    #return all_rest
+
