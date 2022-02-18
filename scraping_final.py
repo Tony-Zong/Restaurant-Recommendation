@@ -16,7 +16,8 @@ def scrape(csv_filename, all_rest = {}):
     reader = csv.reader(csv_read)
     for url in reader:
         complete_url = 'https://www.yelp.com' + url[0]
-        time.sleep(random.randint(1, 3))
+        rand_num = random.random()*20
+        time.sleep(rand_num)
         r = requests.get(complete_url)
         html_doc = r.text.encode('utf-8')
         soup = bs4.BeautifulSoup(html_doc, "html5lib")
