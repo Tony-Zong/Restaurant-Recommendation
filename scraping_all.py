@@ -1,6 +1,6 @@
 from bs4 import BeautifulSoup
 import requests
-import re
+import re 
 import pickle
 import pickle5
 
