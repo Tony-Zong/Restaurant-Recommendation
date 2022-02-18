@@ -6,6 +6,8 @@ import csv
 import requests
 import time
 import random
+import pickle
+import pickle5
 
 def scrape(csv_filename, all_rest = {}):
     '''
@@ -30,9 +32,15 @@ def scrape(csv_filename, all_rest = {}):
         soup = bs4.BeautifulSoup(html_doc, "html5lib")
         rest_name, rest_dict = sa.get_info(soup)
         if rest_name is None:
-            return None
+            return soup
         all_rest[rest_name] = all_rest.get(rest_name, {})
         all_rest[rest_name] = rest_dict
         cnt += 1
         print(rest_name)
+        f = open('data.pickle', 'wb')
+        pickle.dump(all_rest, f, pickle.HIGHEST_PROTOCOL)
+        f.close()
+        print(rest_name)
+
+    
 

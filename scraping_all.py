@@ -1,6 +1,9 @@
 from bs4 import BeautifulSoup
 import requests
 import re
+import pickle
+import pickle5
+
 
 def get_info(soup):
     '''
