@@ -40,11 +40,12 @@ html_doc6 = r6.text.encode('utf-8')
 soup6 = bs4.BeautifulSoup(html_doc6, "html5lib")
 
 ####
-import pickle 
+import pickle
+import pickle5 as p
 
 f = open('data.pickle', 'wb')
 pickle.dump(all_rest, f, pickle.HIGHEST_PROTOCOL)
 f.close()
 
 f = open('data.pickle', 'rb')
-all_rest = pickle.load(f)
+all_rest = p.load(f)
