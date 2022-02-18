@@ -6,6 +6,8 @@ import csv
 import requests
 import time
 import random
+import pickle
+import pickle5 as p
 
 def scrape(csv_filename, all_rest = {}):
     '''
@@ -17,7 +19,10 @@ def scrape(csv_filename, all_rest = {}):
     for url in reader:
         complete_url = 'https://www.yelp.com' + url[0]
         time.sleep(random.randint(1, 3))
-        r = requests.get(complete_url)
+
+        proxies = {'https': '149.19.224.49:3128'}
+
+        r = requests.get(complete_url, proxies=proxies)
         html_doc = r.text.encode('utf-8')
         soup = bs4.BeautifulSoup(html_doc, "html5lib")
         rest_name, rest_dict = sa.get_info(soup)
