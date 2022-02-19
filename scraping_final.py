@@ -30,9 +30,9 @@ def scrape(csv_filename, all_rest = {}):
         r = requests.get(complete_url)
         html_doc = r.text.encode('utf-8')
         soup = bs4.BeautifulSoup(html_doc, "html5lib")
-        rest_name, rest_dict = sa.get_info(soup, url)
+        rest_name, rest_dict = sa.get_info(soup, url[0])
         if rest_name is None:
-            return soup
+            return 'scrapping has been stopped'
         all_rest[rest_name] = all_rest.get(rest_name, {})
         all_rest[rest_name] = rest_dict
         cnt += 1

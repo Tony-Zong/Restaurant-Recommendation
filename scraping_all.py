@@ -18,7 +18,8 @@ def get_info(soup, url):
     # this is to get the restaurant name
     # this is becasue the name on the website isn't unqiue
     # but the name from the URL is unique
-    name_lst = url[5:].split('-')
+    name_str = url[5:]
+    name_lst = name_str.split('-')
     name = ''
     for name_seg in name_lst:
         name += (name_seg[0].upper() + name_seg[1:] + ' ')
