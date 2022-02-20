@@ -17,7 +17,7 @@ def get_info(soup, url):
         return None
 
     # indexer for restaurant name
-    lower_name = name.lower()
+    lower_name = name[0].text.lower()
     name_words = lower_name.split()
     words_set = set(name_words)
 
