@@ -14,16 +14,7 @@ def get_info(soup, url):
     name = soup.find_all('h1', class_="css-1x9iesk")
     # this is used for detecting whether the Yelp site is blocking us
     if len(name) == 0:
-        return (None, None)
-    # this is to get the restaurant name
-    # this is becasue the name on the website isn't unqiue
-    # but the name from the URL is unique
-    name_str = url[5:]
-    name_lst = name_str.split('-')
-    name = ''
-    for name_seg in name_lst:
-        name += (name_seg[0].upper() + name_seg[1:] + ' ')
-    name = name.strip()
+        return None
 
     # indexer for restaurant name
     lower_name = name.lower()
@@ -111,7 +102,5 @@ def get_info(soup, url):
                 'price': price,
                 'words': words_set}
 
-    return (name, rest_dic)
-
-# need to add: amenities
+    return rest_dic
     
