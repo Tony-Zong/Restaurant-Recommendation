@@ -1,6 +1,8 @@
 import pickle
 import pickle5 as p
 
+
+# Token : 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
 # Tasks
 # 1. create a set of all the tags types / other relevant info
 # 2. design dummy data for data viz
@@ -32,20 +34,55 @@ import pickle5 as p
 
 
 ## TASK 1
-def find_info(csv):
+def get_tags(csv):
     '''
     '''
+    all_tags = set()
     f = open(csv, 'rb')
     all_rest = p.load(f)
-    for rest in all_rest:
-        return rest
+    for rest in all_rest.values():
+       for tag in rest['tags']:
+           all_tags.add(tag)
+    return all_tags
 
+all_tags_edit = ['African', 'American (New)', 'American (Traditional)',
+ 'Argentine', 'Asian Fusion', 'Australian', 'Barbeque', 'Brazilian', 'Breakfast & Brunch',
+ 'British', 'Buffets', 'Cafes', 'Cajun/Creole', 'Cantonese', 'Caribbean', 'Chinese',
+ 'Colombian', 'Cuban', 'Czech', 'Desserts', 'Dominican', 'Ethiopian', 'Fast Food',
+ 'Filipino', 'French', 'Georgian', 'German', 'Gluten-Free', 'Greek', 'Halal',
+ 'Hawaiian', 'Himalayan/Nepalese', 'Honduran', 'Indian', 'Irish', 'Italian',
+ 'Japanese', 'Korean', 'Kosher', 'Laotian', 'Latin American', 'Lebanese',
+ 'Malaysian', 'Mediterranean', 'Mexican', 'Middle Eastern', 'Modern European',
+ 'Mongolian', 'Moroccan', 'New Mexican Cuisine', 'Pakistani', 'Pan Asian',
+ 'Persian/Iranian', 'Peruvian', 'Polish', 'Portuguese', 'Puerto Rican',
+ 'Russian', 'Salvadoran', 'Scandinavian', 'Scottish', 'Seafood', 'South African',
+ 'Southern', 'Spanish', 'Sushi Bars', 'Taiwanese', 'Tapas Bars',
+ 'Tex-Mex', 'Thai', 'Turkish', 'Ukrainian', 'Uzbek', 'Vegan', 'Vegetarian',
+ 'Venezuelan', 'Vietnamese']
 
+country_tags = ['African', 'American (New)', 'American (Traditional)',
+ 'Argentine', 'Asian Fusion', 'Australian', 'Brazilian', 
+ 'British', 'Cantonese', 'Caribbean', 'Chinese',
+ 'Colombian', 'Cuban', 'Czech', 'Dominican', 'Ethiopian',
+ 'Filipino','French', 'Georgian', 'German', 'Greek', 
+ 'Hawaiian', 'Himalayan/Nepalese', 'Honduran', 'Indian', 'Irish', 'Italian',
+ 'Japanese', 'Korean', 'Laotian', 'Latin American', 'Lebanese',
+ 'Malaysian', 'Mediterranean', 'Mexican', 'Middle Eastern', 'Modern European',
+ 'Mongolian', 'Moroccan', 'New Mexican Cuisine', 'Pakistani', 'Pan Asian',
+ 'Persian/Iranian', 'Peruvian', 'Polish', 'Portuguese','Puerto Rican', 
+ 'Russian', 'Salvadoran', 'Scandinavian', 'Scottish', 'Seafood', 
+ 'South African', 'Southern', 'Spanish', 'Taiwanese','Thai', 'Turkish', 
+ 'Ukrainian', 'Uzbek', 'Venezuelan', 'Vietnamese']
 
+dietary_tags = ['Gluten-Free', 'Greek', 'Halal','Kosher', 'Vegan', 'Vegetarian']
 
+other_tags = ['Barbeque', 'Breakfast & Brunch', 'Buffets', 'Cafes', 
+'Cajun/Creole', 'Fast Food', 'Seafood','Sushi Bars', 'Tapas Bars']
 
+# tags have been split into three categories. Country/Ethnic tags, tags related
+# to dietary restrictions, and then other tags (len = 77 , 62 , 6 , 9)
 
-
+## TASK 2
 
 
 
