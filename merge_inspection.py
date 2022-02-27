@@ -10,12 +10,7 @@ df_yelp = pd.DataFrame(rest_dict).transpose()
 
 df_yelp[['street', 'city', 'state', 'zipcode']] = df_yelp['address'].str.rsplit(' ', 3, expand=True)
 df_yelp['street'] = df_yelp['street'].str.upper()
-#df_yelp['zipcode'] = df_yelp['address'].str.split(' ',)[-1] # inefficient but not that much data so it's lit
-#df_yelp['state'] = df_yelp['address'].str.split(' ')[-2].upper()
-#df_yelp['city'] = df_yelp['address'].str.split(' ')[-3][:-1].upper()
-#df_yelp['street'] = df_yelp['address'].str.split(' ')[:-3].upper()
 print(df_yelp.columns)
-#print(df_yelp.dtypes)
 
 print(len(df_yelp))
 
@@ -33,13 +28,23 @@ print(df_inspection.columns)
 df_yelp['street'] = df_yelp['street'].astype('string')
 df_inspection['street'] = df_inspection['street'].astype('string')
 
-#print(df_yelp.dtypes)
-#print(df_inspection.dtypes)
+df_yelp.reset_index(inplace=True)
+df_yelp.rename(columns={'index': 'rest_name'}, inplace=True)
+print(df_yelp)
 print(df_yelp['street'])
 print(df_inspection['street'])
 
-df_final = pd.merge(df_yelp, df_inspection, on='street')
+df_final = pd.merge(df_yelp, df_inspection, on='street', how='left')
+df_final = df_final[['rest_name', 'phone', 'website', 'num_review', 'hours', 'tags', 'rating', 'price', 'words', 'street', 'city', 'state', 'zipcode', 'Risk', 'Violations']]
+df_final.reset_index(inplace=True)
+df_final.rename(columns={'index': 'id'}, inplace=True)
+df_final['city'] = df_final['city'].str.replace(',','')
 
 print(df_final)
+print(df_final.columns)
 
-print(df_inspection['street'].str.contains('3357 N LINCOLN AVE').sum())
+f = open('data_to_split.pickle', 'wb')
+pickle5.dump(df_final, f, pickle5.HIGHEST_PROTOCOL)
+f.close()
+#print(df_yelp['street'].str.contains('3357 N LINCOLN AVE').sum())
+#print(df_inspection['street'].str.contains('3357 N LINCOLN AVE').sum())
