@@ -2,25 +2,21 @@ import pickle
 import pickle5 as p
 import matplotlib
 import pandas as pd
+import matplotlib.pyplot as plt
+import numpy as np
 
 # Tasks
-# 1. create a set of all the tags types / other relevant info
-# 2. design dummy data for data viz
+# DONE 1. create a set of all the tags types / other relevant info
+# DONE 2. design dummy data for data viz
 # 3. code for each type of data viz based on data
+# 4. put all viz into one output
 # 4. design UI / prompts for user to input data from database
 
 # Types of Data Viz:
-# 1. A pie chart that summarizes how often the diner eats each type of food (such as Asian food, Mexican food, etc.) 
-# 2. A bar chart summarizing the ratings a user gives to each type of food
-# 3. A bar chart that summarizes the frequencies of ordering on each weekday over the past month
-# 3. A rating from (least liked)0-10(most liked) given to each type of food: 
-#       a weighted score calculated from “user’s frequency of ordering this type of 
-#       food” and “user’s rating given to this type of food”
-# 4. A rating from (least likely to order)0-10(most likely to order) 
-#       given to each period of day“mean +- 1 stdev” to summarize the average 
-#       price range of all the user’s orders
-# 5. Which type of food gains the highest rating from the user?
-# 6. Which specific cuisine does the user most frequently order?
+# DONE 1. A pie chart that summarizes how often the diner eats each type of food (such as Asian food, Mexican food, etc.) 
+# DONE 2. A bar chart summarizing the ratings a user gives to each type of food
+# 3. total spending per week (on avg by cuisine)
+
 
 #f = open('data.pickle', 'rb')
 #all_rest = p.load(f)
@@ -83,21 +79,46 @@ other_tags = ['Barbeque', 'Breakfast & Brunch', 'Buffets', 'Cafes',
 
 ## TASK 2
 #cuisine, frequency of orders in last month , user rating for cuisine, order likelihood
-def create_dummy():
-    dict1 = {'cuisine': ['Hawaiian', 'Fast Food', 'Filipino', 'Asian Fusion', 'Mexican',] ,
+dict1 = {'cuisine': ['Hawaiian', 'Fast Food', 'Filipino', 'Asian Fusion', 'Mexican'] ,
     'num_orders': [ 3 , 5 , 2 , 1 , 4] ,
     'user_rating': [9 , 5 , 8 , 7 , 10]}
+dict2 = {'cuisine': ['Argentine', 'Asian Fusion', 'Australian', 'Brazilian', 
+ 'British', 'Cantonese', 'Caribbean', 'Chinese'] ,
+    'num_orders': [ 8 , 4 , 6 , 7 , 25 , 3 , 1 , 2] ,
+    'user_rating': [1 , 5 , 2 , 7 , 10 , 6 , 8 , 0]}
+
+def create_dummy(dict1):
     return pd.DataFrame.from_dict(dict1)
 
 ## TASK 3
-def dataviz(df):
-    return df.plot.pie
+def func(pct, allvals):
+    absolute = int(np.round(pct/100.*np.sum(allvals)))
+    return "{:.1f}%({:d})".format(pct, absolute)
 
-
-
-
-
-
-
+def pie(df):
+    '''
+    Returns a pie chart that summarizes how often the diner eats each type of food 
+    (such as Asian food, Mexican food, etc.)
+    '''
+    pie = df.plot.pie(y = 'num_orders' , title = 'Recent Orders by Cuisine Type (in last week)\n Order % (Order #)', \
+                        legend = False, ylabel = '' ,
+                        labels = df.loc[:,"cuisine"],  \
+                        autopct = lambda pct: func(pct,df.loc[:,"num_orders"]))
+    plt.show()
+    
+def pref(df):
+    '''
+    Returns a bar chart summarizing the ratings a user gives to each type of food
+    '''
+    fig = plt.figure()
+    cuisine = df.loc[:,"cuisine"]
+    ratings = df.loc[:,"user_rating"]
+    plt.bar(cuisine , ratings , color = 'rgbkymc')
+    plt.ylabel('User Rating 0-10 (least liked - most liked')
+    plt.xlabel('Cuisine Type')
+    plt.title('User Ratings by Cuisine Type')
+    fig.autofmt_xdate()
+    plt.show()
+    
 
 
