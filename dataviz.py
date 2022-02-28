@@ -1,8 +1,8 @@
 import pickle
 import pickle5 as p
+import matplotlib
+import pandas as pd
 
-
-# Token : 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
 # Tasks
 # 1. create a set of all the tags types / other relevant info
 # 2. design dummy data for data viz
@@ -20,8 +20,7 @@ import pickle5 as p
 #       given to each period of day“mean +- 1 stdev” to summarize the average 
 #       price range of all the user’s orders
 # 5. Which type of food gains the highest rating from the user?
-# 6. Which restaurant does the user order from most frequently?
-# 7. Which specific cuisine does the user most frequently order?
+# 6. Which specific cuisine does the user most frequently order?
 
 #f = open('data.pickle', 'rb')
 #all_rest = p.load(f)
@@ -83,10 +82,16 @@ other_tags = ['Barbeque', 'Breakfast & Brunch', 'Buffets', 'Cafes',
 # to dietary restrictions, and then other tags (len = 77 , 62 , 6 , 9)
 
 ## TASK 2
+#cuisine, frequency of orders in last month , user rating for cuisine, order likelihood
+def create_dummy():
+    dict1 = {'cuisine': ['Hawaiian', 'Fast Food', 'Filipino', 'Asian Fusion', 'Mexican',] ,
+    'num_orders': [ 3 , 5 , 2 , 1 , 4] ,
+    'user_rating': [9 , 5 , 8 , 7 , 10]}
+    return pd.DataFrame.from_dict(dict1)
 
-
-
-
+## TASK 3
+def dataviz(df):
+    return df.plot.pie
 
 
 
