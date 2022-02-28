@@ -65,4 +65,10 @@ def get_word_table(pickle_file):
     f2.close() 
 
 
-    
+def pickle_to_csv(pkl_file, csv_file):
+    '''
+    '''
+
+    f = open(pkl_file, "rb") 
+    df = p.load(f)
+    df.to_csv(csv_file)
