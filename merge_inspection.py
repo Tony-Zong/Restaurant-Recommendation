@@ -5,6 +5,7 @@ import pickle5
 # Load dictionary from pickle
 f = open('yelp_data.pickle', 'rb')
 rest_dict = pickle5.load(f)
+f.close()
 
 
 # Convert dictionary to dataframe
@@ -35,7 +36,7 @@ df_yelp.rename(columns={'index': 'rest_name'}, inplace=True)
 
 
 # Merge
-df_final = pd.merge(df_yelp, df_inspection, on='street') # will do left join when it works
+df_final = pd.merge(df_yelp, df_inspection, on='street', how='left') # will do left join when it works
 df_final = df_final[['rest_name', 'phone', 'website', 'num_review', 'hours', 'tags', 'rating', 'price', 'words', 'street', 'city', 'state', 'zipcode', 'Risk', 'Violations']]
 df_final.reset_index(inplace=True)
 df_final.rename(columns={'index': 'id'}, inplace=True)
