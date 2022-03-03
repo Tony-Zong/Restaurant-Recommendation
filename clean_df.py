@@ -32,9 +32,8 @@ convert_dict = {
 df = df.astype(convert_dict)
 
 
-
 # Change default not-found values to NaN
-replace_dict = {'num_review': {-1: np.nan}, 'rating': {-1: np.nan}, 'phone': {-1: 'Not available'}} # add the others later
+replace_dict = {'street': {'NOT': np.nan}, 'city': {'available': np.nan},'zipcode': {'': np.nan}, 'num_review': {-1: np.nan}, 'rating': {-1: np.nan}, 'phone': {-1: 'Not available'}} # add the others later
 df.replace(replace_dict, inplace=True)
 
 
@@ -105,6 +104,7 @@ def output_risk_val(row):
 
 df['risk_val'] = df.apply(lambda row: output_risk_val(row), axis=1)
 
+print(df.loc[703])
 
 #Clean up
 df.drop(['weighted', 'state', 'risk', 'violations'], axis=1, inplace=True)
