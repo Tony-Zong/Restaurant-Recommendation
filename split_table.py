@@ -11,8 +11,8 @@ def get_rest_info(pickle_file):
     f = open(pickle_file, 'rb')
     df = p.load(f)
     rest_info_df = df[['id', 'rest_name', 'phone', 'street', 'city', 'website', 
-                       'num_review', 'bayes', 'violations', 'time_start', 
-                       'time_end', 'risk', 'rating', 'price']]
+                       'num_review', 'bayes', 'vio_occ', 'time_start', 
+                       'time_end', 'risk_val', 'rating', 'price']]
     
     f2 = open('rest_info.pickle', 'wb')
     pickle.dump(rest_info_df, f2, pickle.HIGHEST_PROTOCOL)
