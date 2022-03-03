@@ -60,22 +60,22 @@ def split_end(row):
 
 def convert_start(row):
     if row['time_start'] == 'Unknown':
-        return 'Unknown'
+        return None
     #print(tuple(row['time_start'].split(' ')))
     time, am = tuple(row['time_start'].split(' '))
     time = int(time.replace(':', ''))
-    if am == 'pm':
+    if am == 'PM':
         time += 1200
     return time
 
 def convert_end(row):
     if row['time_end'] == 'Unknown':
-        return 'Unknown'
+        return None
     if len(row['time_end'].split(' ')) > 2:
-        return 'Unknown'
+        return None
     time, am = tuple(row['time_end'].split(' '))
     time = int(time.replace(':', ''))
-    if am == 'pm':
+    if am == 'PM':
         time += 1200
     else:
         time += 2400
@@ -83,33 +83,28 @@ def convert_end(row):
     
 df['time_start'] = df.apply(lambda row: split_start(row), axis=1)
 df['time_end'] = df.apply(lambda row: split_end(row), axis=1)
-print(df['time_end'])
 df['time_end'].to_csv(r'time_end.txt', header=None, index=None, sep=' ', mode='a')
 df['time_start'] = df.apply(lambda row: convert_start(row), axis=1)
 df['time_end'] = df.apply(lambda row: convert_end(row), axis=1)
 
-print(df['time_start'])
-print(df['time_end'])
-
 
 # Create boolean column indicating if health violation was found during inspection
-df['vio_occ'] = df['violations'].any()
+df['violations'].replace('nan', None, inplace=True)
+df['vio_occ'] = df['violations'].notnull()
 
 
 # Convert Risk to numbers and make numeric (only one integer in each value, 1 is high risk 3 is low)
 # might not need to do this
 def output_risk_val(row):
     if not row['risk']:
-        return -1
+        return None
     first_digit = re.search(r'\d', row['risk'])
     if not first_digit:
-        return -1
+        return None
     return first_digit.group(0)
 
 df['risk_val'] = df.apply(lambda row: output_risk_val(row), axis=1)
-print(df['risk'])
-print(df['risk_val'])
-print(df['vio_occ'])
+
 
 #Clean up
 df.drop(['weighted', 'state', 'risk', 'violations'], axis=1, inplace=True)
