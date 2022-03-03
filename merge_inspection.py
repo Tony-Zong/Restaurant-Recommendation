@@ -11,6 +11,12 @@ f.close()
 # Convert dictionary to dataframe
 df_yelp = pd.DataFrame(rest_dict).transpose()
 
+def check_address(row):
+    if row['address'] == 'Not available':
+        return 'Unknown', 'Unknown', 'Unknown', 'Unknown'
+
+df_yelp['street'] = df_yelp.apply(lambda row: check_address(row), axis=1)
+
 df_yelp[['street', 'city', 'state', 'zipcode']] = df_yelp['address'].str.rsplit(' ', 3, expand=True)
 df_yelp['street'] = df_yelp['street'].str.upper().str.strip()
 
