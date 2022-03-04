@@ -8,6 +8,7 @@ import re
 
 def get_rest_info(pickle_file):
     '''
+    Create a dataframe of the information on the restaurants
     '''
     
     f = open(pickle_file, 'rb')
@@ -24,6 +25,7 @@ def get_rest_info(pickle_file):
 
 def get_tag_table(pickle_file):
     '''
+    Create dataframe of the tags assosciated with each restaurants
     '''
 
     f = open(pickle_file, 'rb')
@@ -47,6 +49,7 @@ def get_tag_table(pickle_file):
 
 def get_word_table(pickle_file):
     '''
+    Create a dataframe of all the words assosciated to the restaurants
     '''
 
     f = open(pickle_file, 'rb')
@@ -71,6 +74,8 @@ def get_word_table(pickle_file):
 
 def combine_tables(tag_table_file, word_table_file):
     '''
+    Combines the dataframe of the tags assosciated to the restaurant with the dataframe
+    of the words assosciated to the restaurants
     '''
 
     f1 = open(tag_table_file, 'rb')
@@ -88,6 +93,7 @@ def combine_tables(tag_table_file, word_table_file):
 
 def pickle_to_csv(pkl_file, csv_file):
     '''
+    Converts a pickle file to a csv file
     '''
 
     f = open(pkl_file, "rb") 
