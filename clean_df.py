@@ -33,7 +33,7 @@ df = df.astype(convert_dict)
 
 
 # Change default not-found values to NaN
-replace_dict = {'street': {'NOT': np.nan}, 'city': {'available': np.nan},'zipcode': {'': np.nan}, 'num_review': {-1: np.nan}, 'rating': {-1: np.nan}, 'phone': {-1: 'Not available'}} # add the others later
+replace_dict = {'street': {'NOT': np.nan, 'VERIFIED': np.nan}, 'city': {'available': np.nan, 'by': np.nan},'zipcode': {'': np.nan}, 'num_review': {-1: np.nan}, 'rating': {-1: np.nan}, 'phone': {-1: 'Not available'}} # add the others later
 df.replace(replace_dict, inplace=True)
 
 
