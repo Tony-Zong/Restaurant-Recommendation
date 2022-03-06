@@ -17,10 +17,13 @@ DATABASE_FILENAME = os.path.join(DATA_DIR, 'course-info.db')
 #   star rating (0-5), price (1-3) upper and lower bounds, boolean for standard or new
 # uery = 'SELECT rest_info.* FROM ' + ' WHERE ' + 'ORDER BY rest_info.bayes DESC LIMIT 10'
 
-def recommend(db_fname, words = None, time_start = None, time_end = None, zipcode = None, rating = None, price_low = None, price_high = None, try_new = False):
-    query = gen_query()
+def recommend(user_id, words = None, time_start = None, time_end = None, zipcode = None, rating = None, price_low = None, price_high = None, try_new = False):
+    query = gen_query(user_id, words = None, time_start = None, time_end = None, zipcode = None, rating = None, price_low = None, price_high = None, try_new = False)
 
-def gen_query(db_fname, words = None, time_start = None, time_end = None, zipcode = None, rating = None, price_low = None, price_high = None, try_new = False):
+    
+
+
+def gen_query(db_fname, user_id, words = None, time_start = None, time_end = None, zipcode = None, rating = None, price_low = None, price_high = None, try_new = False):
     '''
     Inputs:
         db_fname (str): string indicating db filename
@@ -92,6 +95,13 @@ def gen_query(db_fname, words = None, time_start = None, time_end = None, zipcod
     # limit is 10 if no words provided, if words provided see comment below
     query += ' WHERE ' + word_args + ' AND '.join(where_args) + ' ORDER BY bayes DESC LIMIT 100' + ';'
 
+    return query
+
+
+
+def process_query(query):
+    '''
+    '''
     db = sqlite3.connect(db_fname)
 
     df = pd.read_sql_query(query, db)
@@ -109,3 +119,5 @@ def gen_query(db_fname, words = None, time_start = None, time_end = None, zipcod
 
     # sort  bayes to nearest int or 0.5 int or something, then sort using two conditions 1. bayes, and 2. tag overlaps
     # split function up
+
+
