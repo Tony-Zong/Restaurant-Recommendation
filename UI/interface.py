@@ -1,22 +1,24 @@
+import datetime
+import dataviz_final as df
+
 def find_user_info():
     print("What is you user ID?")
     userID = input()
-    #userinfo will be the dataframe with all the information
-    #get matching_info from function
-    if matching_info == None:
+    matching_info = df.check_user_exists(userID)
+    if not matching_info:
         print("We do not have a matching userID. If you are a new user input yes otherwise input no to try another userID")
         new_user = input()
         if new_user == 'no':
             find_user_info()
         elif new_user == 'yes':
-            print("As a new user, you have to input some of your eating preferences before proceeding")
-            #call function to get a new entry in
+            print("As a new user, you have to input an eating entry before proceeding")
+            #new_entry function
             new_entry()
         else:
             print("Incorrect input, please try again")
             find_user_info()
     else:
-        print("Input entry if you want to submit a new eating entry or input reccomendation if you want a reccomendation")
+        print("Input entry if you want to submit a new eating entry, input reccomendation if you want a reccomendation input data if you want to view the exisitng data on your eating habits")
         looking_for = input()
         if looking_for == 'entry':
             #call function to get a new entry in
@@ -28,13 +30,63 @@ def find_user_info():
                 tags = get_tags()
             questions_for_reccomendation()
             #call function to get a reccomendation
+        elif looking_for == 'data':
+            get_data()
         else:
             print("Incorrect input, please try again")
             find_user_info()
 
 def new_entry():
-    print("Information asked about what they ate")
-    #returns needed information on what was eaten
+    date = get_date()
+
+def get_data():
+    print("You will be asked to input a range of dates on which you would like data on. If for either start or end date you would like it to not have bounds just press enter")
+    print("What date would you like the data to start from?")
+    start_date = input()
+    print("What date would you like the data to end on?")
+    end_date = input()
+    if start_date != '' and end_date != '':
+        start_check = check_date(start_date)
+        end_check = check_date(end_date)
+        if start_check == None or end_check == None:
+            print("Incorrect input, please try again")
+            get_data()
+        else:
+            return start_check, end_check
+    elif start_date == '':
+        end_check = check_date(end_date)
+        if end_date == None:
+            print("Incorrect input, please try again")
+            get_data()
+        
+
+    
+
+def check_date(date):
+    if len(date) == 10 and date[2] == '/' and date[5] == '/':
+        if date[0:2].ismmumeric() and date[3:5].isnumeric() and date[6:10].isnumeric():
+            month = int(date[0:2])
+            day = int(date[3:5])
+            year = int(date[6:10])
+            if month >= 1 and month <= 12:
+                if day >= 1 and day <= 31:
+                    date_object = datetime(year, month, day)
+                    if date_object <= datetime.now():
+                        return date_object
+    else:
+        return None
+
+def get_date():
+    print("Please enter the day you ate the entry you would like to submit. (Input it in mm/dd/yyyy format)")
+    date = input()
+    
+
+    date
+    restaurant
+    pricerange
+    userRating
+    tags
+
 
 def questions_for_reccomendation():
     open_time = get_open_time()
