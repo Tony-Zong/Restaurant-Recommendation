@@ -32,6 +32,7 @@ def find_user_info():
             #call function to get a reccomendation
         elif looking_for == 'data':
             get_data()
+            #use data function and input start and end dates
         else:
             print("Incorrect input, please try again")
             find_user_info()
@@ -55,12 +56,23 @@ def get_data():
             return start_check, end_check
     elif start_date == '':
         end_check = check_date(end_date)
-        if end_date == None:
+        if end_check == None:
             print("Incorrect input, please try again")
             get_data()
-        
-
-    
+        else:
+            return None, end_check
+    elif end_date == '':
+        start_check = check_date(start_date)
+        if start_check == None:
+            print("Incorrect input, please try again")
+            get_data()
+        else:
+            return start_check, None
+    elif start_date == '' and end_date == '':
+        return None, None
+    else:
+        print("Incorrect input, please try again")
+        get_data()  
 
 def check_date(date):
     if len(date) == 10 and date[2] == '/' and date[5] == '/':
