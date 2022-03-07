@@ -7,7 +7,11 @@ import pickle5
 
 def get_info(soup, url):
     '''
-
+    This function takes a soup object taken from a restaurant's Yelp page, and
+    returns a dictionary (rest_dic) of scraped restraunt info. The keys correspond 
+    intuitively to information from the Yelp page and are as follows:
+    'phone', 'address', 'website', 'num_review', 'hours', 'tags', 'rating', 
+    'price', and 'words'.
     '''
 
     # restaurant name

@@ -8,7 +8,7 @@ import requests
 
 def get_zipcodes(csv_file):
     '''
-
+    Collects zipcodes from a csv file of zipcodes in the CHicago area.
     '''
     zipcodes = []
     with open(csv_file, 'r') as f:
@@ -19,9 +19,10 @@ def get_zipcodes(csv_file):
 # Search Yelp for every restaurant in every zipcode
 # base_search_url = 'https://www.yelp.com/search?cflt=restaurants&find_loc=Chicago%2C+IL+'
 
+
 def urls(starting_url, zipcodes):
     '''
-
+    Collects urls from Yelp for restaurants in Chicago zipcodes.
     '''
     restaurant_urls = set()
     base_search_url = 'https://www.yelp.com/search?cflt=restaurants&find_loc=Chicago%2C+IL+'
@@ -48,6 +49,9 @@ def urls(starting_url, zipcodes):
 
 # Write to CSV
 def csv(restaurant_urls):
+    '''
+    Writes a csv for the set of restaurant URLs.
+    '''
     with open('restaurant_urls.csv', 'w') as file:
         write = csv.writer(file)
         for restaurant_url in restaurant_urls:
