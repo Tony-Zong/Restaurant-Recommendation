@@ -10,6 +10,7 @@ import scraping_all as sa
 import scraping_final as sf
 import pickle
 import pickle5 as p
+import pandas as pd
 
 url1 = "https://www.yelp.com/biz/italian-fiesta-pizzeria-dolton-dolton"
 r = requests.get(url1)
@@ -51,3 +52,42 @@ f.close()
 
 f = open('data.pickle', 'rb')
 all_rest = p.load(f)
+
+
+
+
+
+
+
+DF_FILENAME = 'user_info.pickle'
+
+def check_user_exists(username):
+    '''
+    Check whether the inputted username already exists.
+    '''
+
+    f = open(DF_FILENAME, 'rb')
+    user_info = p.load(f)
+    return username in df['user'].unique()
+
+
+def add_row(user, date, rest, cuisine, user_rating, cost):
+    '''
+    Update the user_info data frame when the user inputs information about a meal.
+    '''
+
+    f = open(DF_FILENAME, 'rb')
+    user_info = p.load(f)
+
+    to_append = {'user': user, 'date': date, 'rest': rest, 'cuisine': cuisine,
+                 'user_rating': user_rating, 'cost': cost}
+
+    user_info = user_info.append(to_append, ignore_index = True)
+
+    f2 = open(DF_FILENAME, 'wb')
+    pickle.dump(user_info, f2, pickle.HIGHEST_PROTOCOL)
+    f2.close()
+
+
+
+                
