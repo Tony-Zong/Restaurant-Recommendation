@@ -11,6 +11,8 @@ import pickle5 as p
 
 def scrape(csv_filename, all_rest = {}):
     '''
+    Writes a csv file for all information picked up by scraping a restaurant's
+    Yelp page. Makes use of 2 levels of randomness for delay between requests.
     '''
 
     # use cnt to add another level of random stops
