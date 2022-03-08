@@ -1,6 +1,7 @@
 import datetime
 import dataviz_final as df
 import dataviz as d
+import reccomendation as r
 
 existing_user, userID = find_user_info()
 if existing_user == False:
@@ -128,6 +129,9 @@ def get_recomendation(userID, try_new):
         #check which type of input will go into tags if the user wants a new rec
     open_time = get_open_time()
     close_time = get_close_time()
+    if close_time != None and open_time != None:
+    	if close_time < open_time:
+    		print("The opening time is later than the closing time, please try again")
     zipcode = get_zipcode()
     rating = get_rating()
     price_range = get_price_range()
@@ -262,25 +266,26 @@ def get_tags():
     else:
         return tags_words
 
-def get_open_time():
+def get_times():
     '''
-    Gets the latest time the user would like the restaurant to open by.
-    Returns a string of the time or None if N/A
+    Gets the minimum time range the user would like the restaurant to be open during.
+    Returns a tuple of strings of the times or None if N/A
     '''
     print("""What is the latest time you would like the restaurant to be open by? 
         \nInput in 24 hour format eg. 1400 for 2:00PM""")
     open_time = input()
     if len(open_time) == 4 and open_time.isnumeric():
         if int(open_time) >= 0 and int(open_time) <= 2359:
-            return open_time
+            open_check = open_time
         else:
-            print("Incorrect input, please try again")
+            print("Invalid time, please try again")
             get_open_time()
     elif open_time == '':
-        return None
+        open_check = None
     else:
-        print("Incorrect input, please try again")
-        get_open_time()
+        print("Invalid time, please try again")
+        get_open_time()	
+	
 
 def get_close_time():
     '''
@@ -288,19 +293,19 @@ def get_close_time():
     Returns None if N/A
     '''
     print("""What is the earliest time would you like the restaurant close by? 
-        \nInput in 24 hour format eg. 1400 for 2:00PM. If you want it to close after midnight.
-        \nAdd additional hours to 2400 eg 2700 for 3:00AM.""")
+        \nInput in 24 hour format eg. 1400 for 2:00PM.
+        \nIf you want it to close after midnight, add additional hours to 2400 eg. 2700 for 3:00AM.""")
     close_time = input()
     if len(close_time) == 4 and close_time.isnumeric():
         if int(close_time) >= 0:
             return close_time
         else:
-            print("Incorrect input, please try again")
+            print("Invalid time, please try again")
             get_open_time()
     elif close_time == '':
         return None
     else:
-        print("Incorrect input, please try again")
+        print("Invalid time, please try again")
         get_open_time()
 
 def get_zipcode():
@@ -315,7 +320,7 @@ def get_zipcode():
     elif zipcode == '':
         return None
     else:
-        print("Incorrect input, please try again")
+        print("Invalid zipcode, please try again")
         get_zipcode()
 
 def get_rating():
@@ -331,7 +336,7 @@ def get_rating():
     elif rating == '':
         return None
     else:
-        print("Incorrect input, please try again")
+        print("Invalid rating, please try again")
         get_rating()
 
 def get_price_range():
@@ -340,7 +345,7 @@ def get_price_range():
     Returns the price range as a string or None if N/A
     '''
     print("""What price range are you looking for? 
-        \nInput an integer between 1 and 4
+        \nInput an integer between 1 and 4.
         \n1 represents under $10, 2 represents $11-$30, 3 represents $31-$60, and 4 represents above $61""")
     price = input()
     if price.isnumeric() and (int(price) == 1 or int(price) == 2 or int(price) == 3 or int(price) == 4):
@@ -348,5 +353,5 @@ def get_price_range():
     elif price == '':
         return None
     else:
-        print("Incorrect input, please try again")
+        print("Invalid price range, please try again")
         get_price()
