@@ -45,8 +45,12 @@ def add_row(user, date, rest, cuisine, user_rating, cost):
 def date_range(start_date , end_date):
     '''
     '''
+    day_set = set()
     delta = end_date - start_date  # as timedelta
     days = [start_date + timedelta(days=i) for i in range(delta.days + 1)]
     for day in days:
-        print(day)
-    #return days
+        day_set.add(day)
+    return day_set
+
+
+    
