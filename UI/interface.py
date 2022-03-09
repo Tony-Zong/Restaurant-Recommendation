@@ -1,18 +1,8 @@
 import datetime
 import dataviz_final as df
 import dataviz as d
-import reccomendation as r
-
-existing_user, userID = find_user_info()
-if existing_user == False:
-    print("As a new user, you have to input an eating entry before proceeding")
-    new_entry(userID)
-else:
-    looking_for(userID)
-something_else = something_else
-while something_else:
-    looking_for()
-    something_else = something_else()
+import recommendation as r
+import pandas as pd
 
 def find_user_info():
     '''
@@ -27,14 +17,15 @@ def find_user_info():
             \nIf you are a new user input yes otherwise input no to try again""")
         new_user = input()
         if new_user == 'no':
-            find_user_info()
+            exits, userID = find_user_info()
         elif new_user == 'yes':
-            return False, userID
+            exists = (False, userID)
         else:
             print("Invalid input, please try again")
-            find_user_info()
+            exists = find_user_info()
     else:
-        return True, userID
+        exists = (True, userID)
+    return exists
 
 def looking_for(userID):
     '''
@@ -47,7 +38,6 @@ def looking_for(userID):
     if looking_for == 'entry':
         new_entry(userID)
     elif looking_for == 'recommendation':
-        #ensure try_new works
         try_new = get_try_new()
         print("""You will be prompted for inputs.
             \nPlease follow the format indicated and if you don't have a preference press enter""")
@@ -65,12 +55,13 @@ def something_else():
     print("Would you like to do something else? Input yes or no")
     something_else = input
     if something_else == 'yes':
-        return True
+        wants_something = True
     elif something_else == 'no':
-        return False
+        wants_something = False
     else:
         print("Invalid input, please try again")
-        something_else()
+        wants_something = something_else()
+    return wants_something
 
 def new_entry(userID):
     '''
@@ -130,7 +121,48 @@ def get_recomendation(userID, try_new):
     rating = get_rating()
     price_low, price_high = get_price_range()
     recs = r.recommend(userID, tags, open_time, close_time, zipcode, rating, price_low, price_high, try_new)
-    #print the recommendations
+    starting_rec = 0
+    starting_rec, final_rec = print_recs(recs, starting_rec)
+    done = add_info(recs, starting_rec, final_rec)
+    while not done:
+        done = add_info(recs, starting_rec, final_rec)
+
+def add_info(recs, starting_rec, final_rec):
+    print("""Would you like to get additional information on any of these restaurants?
+        \nInput the integer corresponding for the restaurant if yes.
+        \nIf you would like to get the subsequent ten restaurants input 0
+        \nIf you are satisfied with the information press enter""")
+    add_info = input()
+    possible_rest_nums = list(range(1, 10+1))
+    if not add_info.isnumeric() or add_info != '':
+        print("Invalid input, please try again")
+        done = add_info(recs, starting_rec, final_rec)
+    elif add_info == '':
+        done = True
+    elif add_info == '0':
+        starting_rec, final_rec = print_recs(recs, starting_rec)
+        done = add_info(recs, starting_rec, final_rec)
+    elif int(add_info) in possible_rest_nums:
+        current_rest = final_rec - int(add_info)
+        print(recs.iloc[current_rest])
+        done = False
+    else:
+        print("Invalid input, please try again")
+        done = add_info(recs, starting_rec, final_rec)
+    return done
+
+def print_recs(recs, starting_rec):
+    print("These are the restaurants we reccomend:")
+    final_rec = startin_rec
+    for row in recs:
+        restaurant = recs.iloc[final_rec]["rest_name"]
+        print(str(final_rec % 10 + 1) + ". " + restaurant)
+        final_rec += 1
+        if final_rec % 10 == 0:
+            break
+    if final_rec % 10 != 0:
+        "These are all the restaurants we can reccomend based on your inputs"
+    return starting_rec, final_rec
 
 def get_try_new():
     '''
@@ -142,12 +174,13 @@ def get_try_new():
         \nInput 2 if you would like restaurant recommendations selected based on things you haven't tried yet""")
     try_new = input()
     if try_new == '1':
-        return False
+        wants_new = False
     elif try_new == '2':
-        return True
+        wants_new = True
     else:
         print("Invalid input, please try again")
-        get_try_new()
+        wants_new = get_try_new()
+    return wants_new
 
 def check_date(date):
     '''
@@ -181,9 +214,10 @@ def get_date():
     date_check = check_date(date)
     if date_check == None:
         print("Not a valid date inputed, please try again")
-        get_date()
+        checked = get_date()
     else:
-        return date_check
+        checked = date_check
+    return checked
 
 def get_restaurant():
     '''
@@ -203,12 +237,13 @@ def get_price():
         \n(Only input numbers with two decimal points eg. 10.30 for $10.30 or press enter if N/A)""")
     price = input()
     if price[len(price) - 3] == '.' and price.isnumeric():
-        return float(price)
+        good_price = float(price)
     elif price == '':
-        return None
+        good_price = None
     else:
         print("Not a valid price, please try again")
-        get_price()
+        good_price = get_price()
+    return good_price
 
 def get_user_rating():
     '''
@@ -218,10 +253,11 @@ def get_user_rating():
     user_rating = input()
     if user_rating.isnumeric():
         if int(user_rating) >= 1 and int(user_rating) <= 5:
-            return float(user_rating)
+            good_user_rating = float(user_rating)
     else:
         print("Not a valid rating, please try again")
-        get_user_rating()
+        good_user_rating = get_user_rating()
+    return good_user_rating
     
 def get_cuisine():
     '''
@@ -233,10 +269,11 @@ def get_cuisine():
     print(cuisine_options)
     cuisine = input()
     if cuisine in cuisine_options:
-        return cuisine
+        good_cuisine = cuisine
     else:
         print("Not a valid cuisine, please try again")
-        get_cuisine()
+        good_cuisine = get_cuisine()
+    return good_cuisine
 
 
 '''
@@ -253,9 +290,10 @@ def get_tags():
     tags_words = input()
     if tags_words == 'suggest':
         #get list of all tags and words and print it
-        get_tags()
+        final_tags = get_tags()
     else:
-        return tags_words
+        final_tags = tags_words
+    return tags_words
 
 def get_times():
     '''
@@ -280,7 +318,7 @@ def get_times():
         \nInput in 24 hour format eg. 1400 for 2:00PM.
         \nIf you want it to close after midnight, add additional hours to 2400 eg. 2700 for 3:00AM.""")
     close_time = input()
-	if len(close_time) == 4 and close_time.isnumeric():
+    if len(close_time) == 4 and close_time.isnumeric():
         if int(close_time) >= 0:
             close_check = close_time
         else:
@@ -305,12 +343,13 @@ def get_zipcode():
     print("Which zipcode would you like the restaurant to be in?")
     zipcode = input()
     if len(zipcode) == 5 and zipcode.isnumeric():
-        return zipcode
+        good_zipcode = zipcode
     elif zipcode == '':
-        return None
+        good_zipcode = None
     else:
         print("Invalid zipcode, please try again")
-        get_zipcode()
+        good_zipcode = get_zipcode()
+    return good_zipcode
 
 def get_rating():
     '''
@@ -321,12 +360,13 @@ def get_rating():
         \nInput a rating between 1 and 5 and a decimal can be inputed""")
     rating = input()
     if rating.isnumeric() and float(rating) >= 0 and float(rating) <= 5:
-        return rating
+        good_rating = rating
     elif rating == '':
-        return None
+        good_rating = None
     else:
         print("Invalid rating, please try again")
-        get_rating()
+        good_rating = get_rating()
+    return good_rating
 
 def get_price_range():
     '''
@@ -360,3 +400,15 @@ def get_price_range():
             print("The lowest price range is higher than the highest price range, please try again")
             get_price_range()
     return low_check, high_check
+
+df.check_user_info_df_exists()
+existing_user, userID = find_user_info()
+if existing_user == False:
+    print("As a new user, you have to input an eating entry before proceeding")
+    new_entry(userID)
+else:
+    looking_for(userID)
+something_else = something_else
+while something_else:
+    looking_for()
+    something_else = something_else()

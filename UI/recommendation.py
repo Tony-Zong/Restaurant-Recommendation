@@ -6,6 +6,7 @@
 # Import libraries
 import os
 import sqlite3
+from tokenize import Ignore
 import pandas as pd
 import pickle5 as p
 
@@ -35,15 +36,15 @@ def recommend(user_id, words = None, time_start = None, time_end = None, zipcode
 def find_user_words(user_id):
     '''
     '''
-    f = open('data.pickle', 'rb')
+    f = open(USER_DATABASE_FILENAME, 'rb')
     df = p.load(f)
     f.close()
 
     df = df[df['user'] == user_id]
     
-    user_words = df['rest'].unique() + df['cuisine'].unique()
+    user_words = list(df['rest'].unique()) + list(df['cuisine'].unique())
 
-    return user_words
+    return ' '.join(user_words)
 
 
 def gen_query(words = None, time_start = None, time_end = None, zipcode = None, rating = None, price_low = None, price_high = None, try_new = False):
@@ -60,8 +61,7 @@ def gen_query(words = None, time_start = None, time_end = None, zipcode = None, 
     '''
     query = 'SELECT * FROM rest_info'
 
-    if words:
-        query += ' JOIN words_table ON rest_info.id == words_table.id'
+
     
     where_args = []
 
@@ -71,7 +71,18 @@ def gen_query(words = None, time_start = None, time_end = None, zipcode = None, 
     if words:
 
         if try_new:
-            pass
+            word_checks = []
+
+            for word in words.split():
+                if len(word) > 2:
+                    word_checks.append('word NOT LIKE \'%' + word + '%\'')
+
+            word_args = '(' + ' AND '.join(word_checks) + ')'
+
+            if not word_checks:
+                word_args = ''
+            else:
+                words_used = True
 
         else:
             word_checks = []
@@ -117,16 +128,21 @@ def gen_query(words = None, time_start = None, time_end = None, zipcode = None, 
         non_word_param = True
 
     # Account for interactions between word arguments and non word arguments
-    if words or non_word_param:
+    include_word_query = False
+    if words_used or try_new:
+        query += ' JOIN words_table ON rest_info.id == words_table.id'  
+        include_word_query = True
+          
+    if include_word_query or non_word_param:
         query += ' WHERE '
-        if words and non_word_param:
+        if include_word_query and non_word_param:
             word_args += ' AND '
 
     # limit is 10 if no words provided, if words provided see comment below
-    if words:
-        limit = get_limit()
-    else:
-        limit = 10
+    # if words:
+    #     limit = get_limit()
+    # else:
+    #     limit = 10
 
     # Assemble completed query
     query += word_args + ' AND '.join(where_args) + ' ORDER BY bayes' #' DESC LIMIT ' + limit + ';'
@@ -134,14 +150,14 @@ def gen_query(words = None, time_start = None, time_end = None, zipcode = None, 
     return query
 
 
-def get_limit():
-    '''
-    '''
-    # FIND LENGTH OF WORDS TABLE (15360), get average tags per word (15360 / 3183) (maybe add 1), MULTUPLY THIS BY NUMBER OF TAGS THAT THEY INPUT
-    db = sqlite3.connect(DATABASE_FILENAME)
-    num_tags = 0
-    num_rest = 0
-    return str(200)
+# def get_limit():
+#     '''
+#     '''
+#     # FIND LENGTH OF WORDS TABLE (15360), get average tags per word (15360 / 3183) (maybe add 1), MULTUPLY THIS BY NUMBER OF TAGS THAT THEY INPUT
+#     db = sqlite3.connect(DATABASE_FILENAME)
+#     num_tags = 0
+#     num_rest = 0
+#     return str(200)
 
 
 def process_query(query):
@@ -163,7 +179,7 @@ def process_query(query):
     # Remove stray duplicate columns
     df = df.loc[:,~df.columns.duplicated()]
 
-    df.drop(['word'], axis=1, inplace=True)
+    df.drop('word', axis=1, inplace=True, errors='ignore')
 
     # take df, summarize by rest_name (get all the tags into like a list or something in one column, maybe just add strings),
     # write function to cmopare user input words to the tags, produce column for number of overlaps
