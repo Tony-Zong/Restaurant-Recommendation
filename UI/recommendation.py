@@ -7,11 +7,13 @@
 import os
 import sqlite3
 import pandas as pd
+import pickle5 as p
 
 
 # Path to database
 DATA_DIR = os.path.dirname(__file__)
 DATABASE_FILENAME = os.path.join(DATA_DIR, 'rest_db.db')
+USER_DATABASE_FILENAME = os.path.join(DATA_DIR, 'user_info.pickle')
 
 
 # Take in inputs
@@ -20,12 +22,31 @@ DATABASE_FILENAME = os.path.join(DATA_DIR, 'rest_db.db')
 # uery = 'SELECT rest_info.* FROM ' + ' WHERE ' + 'ORDER BY rest_info.bayes DESC LIMIT 10'
 
 def recommend(user_id, words = None, time_start = None, time_end = None, zipcode = None, rating = None, price_low = None, price_high = None, try_new = False):
-    query = gen_query(user_id, words, time_start, time_end, zipcode, rating, price_low, price_high, try_new)
+    '''
+    '''
+    if try_new:
+        user_words = find_user_words(user_id)
+        query = gen_query(user_words, time_start, time_end, zipcode, rating, price_low, price_high, try_new)
+    else:
+        query = gen_query(words, time_start, time_end, zipcode, rating, price_low, price_high, try_new)
     return process_query(query)
     
 
+def find_user_words(user_id):
+    '''
+    '''
+    f = open('data.pickle', 'rb')
+    df = p.load(f)
+    f.close()
 
-def gen_query(user_id, words = None, time_start = None, time_end = None, zipcode = None, rating = None, price_low = None, price_high = None, try_new = False):
+    df = df[df['user'] == user_id]
+    
+    user_words = df['rest'].unique() + df['cuisine'].unique()
+
+    return user_words
+
+
+def gen_query(words = None, time_start = None, time_end = None, zipcode = None, rating = None, price_low = None, price_high = None, try_new = False):
     '''
     Inputs:
         db_fname (str): string indicating db filename
@@ -44,22 +65,31 @@ def gen_query(user_id, words = None, time_start = None, time_end = None, zipcode
     
     where_args = []
 
-    # Where arguments, CHANGE TO BETTER LOOKING THAN 30000 IFS LATER pakistani/irani
+    # Build query for words
     words_used = False
-    word_args = '' # don't forget to append AND on the back
+    word_args = ''
     if words:
-        word_checks = []
-        for word in words.split():
-            if len(word) > 2:
-                word_checks.append('word LIKE \'%' + word + '%\'')
-        word_args = '(' + ' OR '.join(word_checks) + ')'
-        if not word_checks:
-            word_args = ''
+
+        if try_new:
+            pass
+
         else:
-            words_used = True
+            word_checks = []
+
+            for word in words.split():
+                if len(word) > 2:
+                    word_checks.append('word LIKE \'%' + word + '%\'')
+
+            word_args = '(' + ' OR '.join(word_checks) + ')'
+
+            if not word_checks:
+                word_args = ''
+            else:
+                words_used = True
     
     non_word_param = False
 
+    # Build query for other paramaters
     if time_start:
         where_args.append('time_start >= ' + time_start)
         non_word_param = True
@@ -86,18 +116,20 @@ def gen_query(user_id, words = None, time_start = None, time_end = None, zipcode
         where_args.append('price != ' + '-1')
         non_word_param = True
 
-    #soajdsoijdsioa
+    # Account for interactions between word arguments and non word arguments
     if words or non_word_param:
         query += ' WHERE '
         if words and non_word_param:
             word_args += ' AND '
 
-    
-    # Query
-
     # limit is 10 if no words provided, if words provided see comment below
-    limit = get_limit()
-    query += word_args + ' AND '.join(where_args) + ' ORDER BY bayes DESC LIMIT ' + limit + ';'
+    if words:
+        limit = get_limit()
+    else:
+        limit = 10
+
+    # Assemble completed query
+    query += word_args + ' AND '.join(where_args) + ' ORDER BY bayes' #' DESC LIMIT ' + limit + ';'
 
     return query
 
@@ -114,33 +146,38 @@ def get_limit():
 
 def process_query(query):
     '''
+    Produces final recommendation output.
+
+    Inputs:
+        query (str)
+    
+    Outputs:
+        pandas df of top restaurants in order and relevant information
     '''
     print(query)
+    # Read SQL output to pandas df
     db = sqlite3.connect(DATABASE_FILENAME)
     df = pd.read_sql_query(query, db)
     db.close()
 
+    # Remove stray duplicate columns
     df = df.loc[:,~df.columns.duplicated()]
-    print(df.columns)
 
-    print(df[['rest_name', 'word']])
-
+    df.drop(['word'], axis=1, inplace=True)
 
     # take df, summarize by rest_name (get all the tags into like a list or something in one column, maybe just add strings),
     # write function to cmopare user input words to the tags, produce column for number of overlaps
-    df.groupby('id').size() # right now the only words found are the words that are searched for, somehow need to get all the words
-    print(df)
+    df['id'] = pd.to_numeric(df['id'])
+    df['tag_overlaps'] = 1
+    output_cols = ['id', 'rest_name', 'phone', 'street', 'city', 'zipcode', 'bayes', 'vio_occ', 'time_start', 'time_end', 'risk_val', 'rating', 'price']
+    df = df.groupby(output_cols)['tag_overlaps'].count().reset_index() # right now the only words found are the words that are searched for, somehow need to get all the words
 
-    print(df.dtypes)
-
-    # sort  bayes to nearest int or 0.5 int
+    # Sort bayes to nearest 0.5 int
+    df['bayes'] = pd.to_numeric(df['bayes'])
     df['rounded_bayes'] = df['bayes'].mul(2).round().div(2)
 
-    # sort using two conditions 1. bayes, and 2. tag overlaps
-    df.sort_values(['rounded_bayes', 'tag_overlaps'], ascending=False, inplace=True)
+    # Sort using three conditions 1. Rounded bayes, 2. tag overlaps, and 3. bayes (non-rounded)
+    df.sort_values(['rounded_bayes', 'tag_overlaps', 'bayes'], ascending=False, inplace=True)
 
-    print(df.head(10))
-
-    return df.head(10)
-
+    return df
 
