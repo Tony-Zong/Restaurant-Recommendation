@@ -77,20 +77,6 @@ def add_row(user, date, rest, cuisine, user_rating, cost):
     f2.close()
 
 
-# start date and end date are None by default. if this is the case return dataviz
-# for all dates in date range
-
-def date_range(start_date , end_date):
-    '''
-    '''
-    day_set = set()
-    delta = end_date - start_date  # as timedelta
-    days = [start_date + timedelta(days=i) for i in range(delta.days + 1)]
-    for day in days:
-        day_set.add(day)
-    return day_set
-
-
 # DATAVIZ
 def func(pct, allvals):
     '''
@@ -108,37 +94,55 @@ def func2(pct, allvals):
     return "{:.1f}%(${:d})".format(pct, absolute)
 
 
-def pie(df):
+def get_subset(df , user , start_date , end_date):
+    '''
+    '''
+    if start_date != None and end_date != None:
+        subset_df = df.loc[(df['user'] == user) & (df['date'] \
+                                >= start_date) & (df['date'] <= end_date)]
+    elif start_date == None:
+        subset_df = df.loc[(df['user'] == user) & (df['date'] <= end_date)]
+    elif end_date == None:
+        subset_df = df.loc[(df['user'] == user) & (df['date'] >= start_date)]
+    if start_date == None and end_date == None:
+        subset_df = df.loc[df['user'] == user]
+    return subset_df
+
+
+def pie(df , user , start_date , end_date):
     '''
     Returns a pie chart that summarizes how often the diner eats each type of food 
     (such as Asian food, Mexican food, etc.)
     '''
-    pie = df.plot.pie(y = 'num_orders' , title = 'Recent Orders by Cuisine Type (in last week)\n Order % (Order #)', \
-                        legend = False, ylabel = '' ,
-                        labels = df.loc[:,"cuisine"],  \
-                        autopct = lambda pct: func(pct,df.loc[:,"num_orders"]))
-    plt.show()
+    subset_df = get_subset(df , user , start_date , end_date)
+    #pie = df.plot.pie(y = 'num_orders' , title = 'Orders by Cuisine Type Between' + print(start_date) + print\n Order % (Order #)', \
+                        #legend = False, ylabel = '' ,
+                        #labels = df.loc[:,"cuisine"],  \
+                        #autopct = lambda pct: func(pct,df.loc[:,"num_orders"]))
+    #plt.show()
     
 
-def pref(df):
+def pref(df , user ,  start_date , end_date):
     '''
     Returns a bar chart summarizing the ratings a user gives to each type of food.
     '''
+    subset_df = get_subset(df , user , start_date , end_date)
     fig = plt.figure()
     cuisine = df.loc[:,"cuisine"]
     ratings = df.loc[:,"user_rating"]
-    plt.bar(cuisine , ratings , color = 'rgbkymc')
-    plt.ylabel('User Rating 0-10 (least liked - most liked')
+    plt.bar(cuisine , ratings)
+    plt.ylabel('User Ratings (1-5)')
     plt.xlabel('Cuisine Type')
-    plt.title('User Ratings by Cuisine Type')
+    plt.title('User Ratings by Cuisine Type from' + ' ' + start_date.strftime("%b %d %Y") + ' to ' + end_date.strftime("%b %d %Y"))
     fig.autofmt_xdate()
     plt.show()
     
 
-def costs(df):
+def costs(df , start_date , end_date):
     '''
     Returns a pie chart estimating total spending by cuisine for a user.
     '''
+    subset_df = get_subset(df , user , start_date , end_date)
     pie = df.plot.pie(y = 'est_total' , \
             title = 'Estimated Total Spending by Cuisine (in last week) \n (# orders * avg price)', \
                         legend = False, ylabel = '' ,
@@ -147,7 +151,7 @@ def costs(df):
     plt.show()
 
 
-def all_viz(df):
+def all_viz(df , start_date , end_date):
     '''
     Returns all three types of visualizations listed above and stores as a pdf
     in user's repository.
