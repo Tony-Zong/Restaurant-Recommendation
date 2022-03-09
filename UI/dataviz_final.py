@@ -9,6 +9,33 @@ from datetime import date , timedelta
 
 DF_FILENAME = 'user_info.pickle'
 
+ALL_TAGS_EDIT = ['African', 'American (New)', 'American (Traditional)',
+ 'Argentine', 'Asian Fusion', 'Australian', 'Barbeque', 'Brazilian', 'Breakfast & Brunch',
+ 'British', 'Buffets', 'Cafes', 'Cajun/Creole', 'Cantonese', 'Caribbean', 'Chinese',
+ 'Colombian', 'Cuban', 'Czech', 'Desserts', 'Dominican', 'Ethiopian', 'Fast Food',
+ 'Filipino', 'French', 'Georgian', 'German', 'Gluten-Free', 'Greek', 'Halal',
+ 'Hawaiian', 'Himalayan/Nepalese', 'Honduran', 'Indian', 'Irish', 'Italian',
+ 'Japanese', 'Korean', 'Kosher', 'Laotian', 'Latin American', 'Lebanese',
+ 'Malaysian', 'Mediterranean', 'Mexican', 'Middle Eastern', 'Modern European',
+ 'Mongolian', 'Moroccan', 'New Mexican Cuisine', 'Pakistani', 'Pan Asian',
+ 'Persian/Iranian', 'Peruvian', 'Polish', 'Portuguese', 'Puerto Rican',
+ 'Russian', 'Salvadoran', 'Scandinavian', 'Scottish', 'Seafood', 'South African',
+ 'Southern', 'Spanish', 'Sushi Bars', 'Taiwanese', 'Tapas Bars',
+ 'Tex-Mex', 'Thai', 'Turkish', 'Ukrainian', 'Uzbek', 'Vegan', 'Vegetarian',
+ 'Venezuelan', 'Vietnamese']
+
+def get_tags(csv):
+    '''
+    Gets all possible tags from the csv of all restaurant info.
+    '''
+    all_tags = set()
+    f = open(csv, 'rb')
+    all_rest = p.load(f)
+    for rest in all_rest.values():
+       for tag in rest['tags']:
+           all_tags.add(tag)
+    return all_tags
+
 
 def check_user_exists(username):
     '''
@@ -20,6 +47,18 @@ def check_user_exists(username):
     return username in df['user'].unique()
 
 
+def check_user_info_df_exists():
+    '''
+    Check that user_info.pickle exists. If not, create one.
+    '''
+
+    if not exists(DF_FILENAME): 
+        df = pd.DataFrame(columns = ['user','date','rest','cuisine','user_rating','cost'])
+        f = open(DF_FILENAME, 'wb')
+        pickle.dump(df, f, pickle.HIGHEST_PROTOCOL)
+        f.close()
+
+
 def add_row(user, date, rest, cuisine, user_rating, cost):
     '''
     Update the user_info data frame when the user inputs information about a meal.
@@ -28,7 +67,7 @@ def add_row(user, date, rest, cuisine, user_rating, cost):
     f = open(DF_FILENAME, 'rb')
     user_info = p.load(f)
 
-    to_append = {'user': user, 'date': date, 'rest': rest, 'cuisine': cuisine,
+    to_append = {'user': user, 'date': date, 'rest': rest, 'cuisine': cuisine, \
                  'user_rating': user_rating, 'cost': cost}
 
     user_info = user_info.append(to_append, ignore_index = True)
@@ -37,7 +76,6 @@ def add_row(user, date, rest, cuisine, user_rating, cost):
     pickle.dump(user_info, f2, pickle.HIGHEST_PROTOCOL)
     f2.close()
 
-    
 
 # start date and end date are None by default. if this is the case return dataviz
 # for all dates in date range
@@ -51,6 +89,7 @@ def date_range(start_date , end_date):
     for day in days:
         day_set.add(day)
     return day_set
+
 
 # DATAVIZ
 def func(pct, allvals):
