@@ -40,7 +40,24 @@ This is the group project repository for CMSC 12200. The project aims to create 
 
 `clean_df.pickle`: Pandas data frame that stores the cleaned, finalized data frame. 
 
-`split_table.py`: scripts that splits the cleaned data frame into two tables. `words_table` has two columns: `id` for restaurnt id; `word` for tags and words in the restaurant name. `rest_info` stores the rest of the information about each restaurant (`rest_name`, `phone`, `street`, `city`, `zipcode`, `website`, `num_review`, `bayes`, `vio_occ`, `time_start`, `time_end`, `risk_val`, `rating`, `price`). 
+`split_table.py`: scripts that splits the cleaned data frame into two tables. `words_table.csv` has two columns: `id` for restaurnt id; `word` for tags and words in the restaurant name. `rest_info.csv` stores the rest of the information about each restaurant (`rest_name`, `phone`, `street`, `city`, `zipcode`, `website`, `num_review`, `bayes`, `vio_occ`, `time_start`, `time_end`, `risk_val`, `rating`, `price`). 
+
+`create_rest_db.sql`: SQL that specifies the scheme of the database. 
+
+### `UI` folder 
+
+`rest_db.db`: 
+
+`dataviz_final.py`: 
+
+`recommendation.py`: 
+
+`interface.py`: 
+
+### `archive` folder
+
+Other files that we created during the development process. Theya re now archived. 
+
 
 
 ## Progress 
