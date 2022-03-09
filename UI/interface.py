@@ -308,12 +308,12 @@ def get_times():
             open_check = open_time
         else:
             print("Invalid time, please try again")
-            get_times()
+            open_check, close_check = get_times()
     elif open_time == '':
         open_check = None
     else:
         print("Invalid time, please try again")
-        get_times()	
+        open_check, close_check = get_times()	
     print("""What is the earliest time would you like the restaurant close by? 
         \nInput in 24 hour format eg. 1400 for 2:00PM.
         \nIf you want it to close after midnight, add additional hours to 2400 eg. 2700 for 3:00AM.""")
@@ -323,16 +323,16 @@ def get_times():
             close_check = close_time
         else:
             print("Invalid time, please try again")
-            get_times()
+            open_check, close_check = get_times()
     elif close_time == '':
         close_check = None
     else:
         print("Invalid time, please try again")
-        get_times()
+        open_check, close_check = get_times()
     if open_check != None and close_check != None:
         if open_check > close_check:
             print("The closing time was earlier than the opening time, please try again")
-            get_times()
+            open_check, close_check = get_times()
     return open_check, close_check
 
 def get_zipcode():
@@ -384,7 +384,7 @@ def get_price_range():
         low_check = None
     else:
         print("Invalid price, please try again")
-        get_price_range()
+        low_check, high_check = get_price_range()
     print("What is the highest price range you are looking for?")
     price_high = input()
     if price_high.isnumeric() and (int(price_high) == 1 or int(price_high) == 2 
@@ -394,11 +394,11 @@ def get_price_range():
         high_check = None
     else:
         print("Invalid price, please try again")
-        get_price_range()
+        low_check, high_check = get_price_range()
     if low_check != None and high_check != None:
         if low_check > high_check:
             print("The lowest price range is higher than the highest price range, please try again")
-            get_price_range()
+            low_check, high_check = get_price_range()
     return low_check, high_check
 
 df.check_user_info_df_exists()
