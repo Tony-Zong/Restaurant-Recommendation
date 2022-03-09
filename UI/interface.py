@@ -123,20 +123,14 @@ def get_recomendation(userID, try_new):
     '''
     if not try_new:
         tags = get_tags()
-        #empty string if no tags inputed
     else:
         tags = None
-        #check which type of input will go into tags if the user wants a new rec
-    open_time = get_open_time()
-    close_time = get_close_time()
-    if close_time != None and open_time != None:
-    	if close_time < open_time:
-    		print("The opening time is later than the closing time, please try again")
+    open_time, close_time = get_times()
     zipcode = get_zipcode()
     rating = get_rating()
-    price_range = get_price_range()
-    #get the reccomendations
-    #put the print statment of reccomendations being successfully recieved
+    price_low, price_high = get_price_range()
+    recs = r.recommend(userID, tags, open_time, close_time, zipcode, rating, price_low, price_high, try_new)
+    #print the recommendations
 
 def get_try_new():
     '''
@@ -198,10 +192,7 @@ def get_restaurant():
     '''
     print("Input the name of the restaurant you ate at for this entry. (Press enter if N/A)")
     restaurant = input()
-    if restaurant == '':
-        return None
-    else:
-        return restaurant
+    return restaurant
 
 def get_price():
     '''
@@ -279,34 +270,32 @@ def get_times():
             open_check = open_time
         else:
             print("Invalid time, please try again")
-            get_open_time()
+            get_times()
     elif open_time == '':
         open_check = None
     else:
         print("Invalid time, please try again")
-        get_open_time()	
-	
-
-def get_close_time():
-    '''
-    Gets the earliest time the user would like the restaurant to close at.
-    Returns None if N/A
-    '''
+        get_times()	
     print("""What is the earliest time would you like the restaurant close by? 
         \nInput in 24 hour format eg. 1400 for 2:00PM.
         \nIf you want it to close after midnight, add additional hours to 2400 eg. 2700 for 3:00AM.""")
     close_time = input()
-    if len(close_time) == 4 and close_time.isnumeric():
+	if len(close_time) == 4 and close_time.isnumeric():
         if int(close_time) >= 0:
-            return close_time
+            close_check = close_time
         else:
             print("Invalid time, please try again")
-            get_open_time()
+            get_times()
     elif close_time == '':
-        return None
+        close_check = None
     else:
         print("Invalid time, please try again")
-        get_open_time()
+        get_times()
+    if open_check != None and close_check != None:
+        if open_check > close_check:
+            print("The closing time was earlier than the opening time, please try again")
+            get_times()
+    return open_check, close_check
 
 def get_zipcode():
     '''
@@ -344,14 +333,30 @@ def get_price_range():
     Asks the user what price range they would like the recommendations to be in.
     Returns the price range as a string or None if N/A
     '''
-    print("""What price range are you looking for? 
-        \nInput an integer between 1 and 4.
+    print("""Price ranges are presented as integers between 1 and 4.
         \n1 represents under $10, 2 represents $11-$30, 3 represents $31-$60, and 4 represents above $61""")
-    price = input()
-    if price.isnumeric() and (int(price) == 1 or int(price) == 2 or int(price) == 3 or int(price) == 4):
-        return price
-    elif price == '':
-        return None
+    print("What is the lowest price range you are looking for?")
+    price_low = input()
+    if price_low.isnumeric() and (int(price_low) == 1 or int(price_low) == 2 
+        or int(price_low) == 3 or int(price_low) == 4):
+        low_check = price_low
+    elif price_low == '':
+        low_check = None
     else:
-        print("Invalid price range, please try again")
-        get_price()
+        print("Invalid price, please try again")
+        get_price_range()
+    print("What is the highest price range you are looking for?")
+    price_high = input()
+    if price_high.isnumeric() and (int(price_high) == 1 or int(price_high) == 2 
+        or int(price_high) == 3 or int(price_high) == 4):
+        high_check = price_high
+    elif price_high == '':
+        high_check = None
+    else:
+        print("Invalid price, please try again")
+        get_price_range()
+    if low_check != None and high_check != None:
+        if low_check > high_check:
+            print("The lowest price range is higher than the highest price range, please try again")
+            get_price_range()
+    return low_check, high_check
