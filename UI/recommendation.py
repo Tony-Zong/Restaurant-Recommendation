@@ -43,6 +43,7 @@ def find_user_words(user_id):
     df = df[df['user'] == user_id]
     
     user_words = list(df['rest'].unique()) + list(df['cuisine'].unique())
+    user_words = [word.lower() for word in user_words]
 
     return ' '.join(user_words)
 
@@ -75,7 +76,7 @@ def gen_query(words = None, time_start = None, time_end = None, zipcode = None, 
 
             for word in words.split():
                 if len(word) > 2:
-                    word_checks.append('word NOT LIKE \'%' + word + '%\'')
+                    word_checks.append('word NOT LIKE \'%' + word.lower() + '%\'')
 
             word_args = '(' + ' AND '.join(word_checks) + ')'
 
