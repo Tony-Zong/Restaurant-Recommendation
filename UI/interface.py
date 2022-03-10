@@ -15,7 +15,7 @@ def find_user_info():
     matching_info = df.check_user_exists(userID)
     if not matching_info:
         print("""We do not have a matching user ID. 
-            \nIf you are a new user input yes otherwise input no to try again""")
+            \nIf you are a new user, type "yes" otherwise input "no" to try again""")
         new_user = input()
         if new_user == 'no':
             exits, userID = find_user_info()
@@ -33,19 +33,21 @@ def looking_for(userID):
     Prompts the user to input what they are looking for and does what they request
     '''
     #needs to be checked
-    print("""Input entry if you want to submit a new eating entry
-        \nInput recommendation if you want a recommendation
-        \nInput data if you want to view the exisitng data on your eating habits""")
+    print("")
+    print("Welcome, " + userID + "!")
+    print("""Input 1 if you want to submit a new eating entry
+        \nInput 2 if you want a recommendation
+        \nInput 3 if you want to view the exisitng data on your eating habits""")
     looking_for = input()
-    if looking_for == 'entry':
+    if looking_for == '1':
         new_entry(userID)
-    elif looking_for == 'recommendation':
+    elif looking_for == '2':
         try_new = get_try_new()
         print("""You will be prompted for inputs.
             \nPlease follow the format indicated and if you don't have a preference press enter""")
         get_recommendation(userID, try_new)
-    elif looking_for == 'data':
-        get_data()
+    elif looking_for == '3':
+        get_data(userID)
     else:
         print("Invalid input, please try again")
         looking_for()
@@ -472,3 +474,6 @@ def main():
     while something_else:
         looking_for()
         something_else = something_else()
+
+if __name__ == "__main__":
+    main()
