@@ -449,6 +449,7 @@ def get_low_price():
 
 def get_high_price():
     #WORKS
+    #WYAYA
     print("\nWhat is the highest price range you are looking for?")
     price_high = input()
     if price_high.isnumeric() and (int(price_high) == 1 or int(price_high) == 2 
