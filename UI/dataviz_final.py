@@ -6,6 +6,7 @@ import matplotlib.pyplot as plt
 import numpy as np
 from matplotlib.backends.backend_pdf import PdfPages
 from datetime import date , timedelta
+from os.path import exists
 
 DF_FILENAME = 'user_info.pickle'
 
@@ -44,7 +45,7 @@ def check_user_exists(username):
 
     f = open(DF_FILENAME, 'rb')
     user_info = p.load(f)
-    return username in df['user'].unique()
+    return username in user_info['user'].unique()
 
 
 def check_user_info_df_exists():
