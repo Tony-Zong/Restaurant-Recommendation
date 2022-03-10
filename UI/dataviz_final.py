@@ -25,6 +25,7 @@ ALL_TAGS_EDIT = ['African', 'American (New)', 'American (Traditional)',
  'Tex-Mex', 'Thai', 'Turkish', 'Ukrainian', 'Uzbek', 'Vegan', 'Vegetarian',
  'Venezuelan', 'Vietnamese']
 
+
 def get_tags(csv):
     '''
     Gets all possible tags from the csv of all restaurant info.
@@ -68,10 +69,10 @@ def add_row(user, date, rest, cuisine, user_rating, cost):
     f = open(DF_FILENAME, 'rb')
     user_info = p.load(f)
 
-    to_append = {'user': user, 'date': date, 'rest': rest, 'cuisine': cuisine, \
-                 'user_rating': user_rating, 'cost': cost}
+    to_append = pd.DataFrame({'user': [user], 'date': [date], 'rest': [rest], 'cuisine': [cuisine], \
+                 'user_rating': [user_rating], 'cost': [cost]})
 
-    user_info = user_info.append(to_append, ignore_index = True)
+    user_info = pd.concat([user_info, to_append], ignore_index = True)
 
     f2 = open(DF_FILENAME, 'wb')
     pickle.dump(user_info, f2, pickle.HIGHEST_PROTOCOL)
@@ -95,9 +96,11 @@ def func2(pct, allvals):
     return "{:.1f}%(${:d})".format(pct, absolute)
 
 
-def get_subset(df , user , start_date , end_date):
+def get_subset(user , start_date , end_date):
     '''
     '''
+    f = open(DF_FILENAME, 'rb')
+    df = p.load(f)
     if start_date != None and end_date != None:
         subset_df = df.loc[(df['user'] == user) & (df['date'] \
                                 >= start_date) & (df['date'] <= end_date)]
@@ -110,12 +113,14 @@ def get_subset(df , user , start_date , end_date):
     return subset_df
 
 
-def freq(df , user , start_date , end_date):
+def freq(user, start_date, end_date):
     '''
     Returns a pie chart that summarizes how often the diner eats each type of food 
     (such as Asian food, Mexican food, etc.)
     '''
-    subset_df = get_subset(df , user , start_date , end_date)
+    f = open(DF_FILENAME, 'rb')
+    df = p.load(f)
+    subset_df = get_subset(user, start_date, end_date)
     subset_df = subset_df.reset_index()
     subset_df = subset_df[['cuisine']].value_counts().rename_axis('cuisine').reset_index(name='counts')
     if start_date != None and end_date != None:
@@ -137,13 +142,15 @@ def freq(df , user , start_date , end_date):
     plt.show()
     return pie
 
-def pref(df , user ,  start_date , end_date):
+def pref(user, start_date, end_date):
     '''
     Returns a bar chart summarizing the ratings a user gives to each type of food.
     '''
+    f = open(DF_FILENAME, 'rb')
+    df = p.load(f)
     # get subset of dataframe based on username and start/end date
     duplicate_indices = {}
-    subset_df = get_subset(df , user , start_date , end_date)
+    subset_df = get_subset(user, start_date, end_date)
     subset_df = subset_df.reset_index()
     # finds indexes where duplicate restaraunts and maps them to rest key
     for i , row in enumerate(subset_df.duplicated(subset=['rest'] , keep = False)):
@@ -194,11 +201,13 @@ def pref(df , user ,  start_date , end_date):
     return fig
 
 
-def costs(df , user , start_date , end_date):
+def costs(user, start_date, end_date):
     '''
     Returns a pie chart estimating total spending by cuisine for a user.
     '''
-    subset_df = get_subset(df , user , start_date , end_date)
+    f = open(DF_FILENAME, 'rb')
+    df = p.load(f)
+    subset_df = get_subset(user, start_date, end_date)
     subset_df = subset_df.reset_index()
     cuisine_cost_df =  subset_df.loc[:, subset_df.columns!='user_rating'].groupby(['user', 'cuisine']).sum()
     cuisine_cost_df = cuisine_cost_df.reset_index()
@@ -222,17 +231,19 @@ def costs(df , user , start_date , end_date):
     return pie
 
 
-def all_viz(df , user , start_date , end_date):
+def all_viz(user, start_date, end_date):
     '''
     Returns all three types of visualizations listed above and stores as a pdf
     in user's repository.
     '''
+    f = open(DF_FILENAME, 'rb')
+    df = p.load(f)
     # orders by cuisine type
-    fig1 = freq(df , user , start_date , end_date)
+    fig1 = freq(user, start_date, end_date)
     # user spending by cuisine type
-    fig2 = costs(df , user , start_date , end_date)
+    fig2 = costs(user, start_date, end_date)
     # user ratings by cuisine type
-    fig3 = pref(df , user , start_date , end_date)
+    fig3 = pref(user, start_date, end_date)
     # saving PDF of visualizations in UI repository
     pp = PdfPages('dataviz_' + user + '.pdf')
     pp.savefig(fig1.figure)
