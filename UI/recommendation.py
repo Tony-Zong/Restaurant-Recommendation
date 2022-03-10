@@ -1,8 +1,3 @@
-# Provides functions to recommend
-# MAYBE DO PANDAS TO SQL INSEAD OF CSV TO SQL
-
-# TO DO: finish get_limit, fix bayes rounding by converting to int, account for try_new (need to wait for data structure), get group_by to work
-
 # Import libraries
 import os
 import sqlite3
@@ -11,19 +6,29 @@ import pandas as pd
 import pickle5 as p
 
 
-# Path to database
+# Path to databases
 DATA_DIR = os.path.dirname(__file__)
 DATABASE_FILENAME = os.path.join(DATA_DIR, 'rest_db.db')
 USER_DATABASE_FILENAME = os.path.join(DATA_DIR, 'user_info.pickle')
 
 
-# Take in inputs
-# tags/words (from search bar, this assumes its comoing from a fat string), time_start, time_end, city, zipcode, 
-#   star rating (0-5), price (1-3) upper and lower bounds, boolean for standard or new
-# uery = 'SELECT rest_info.* FROM ' + ' WHERE ' + 'ORDER BY rest_info.bayes DESC LIMIT 10'
-
 def recommend(user_id, words = None, time_start = None, time_end = None, zipcode = None, rating = None, price_low = None, price_high = None, try_new = False):
     '''
+    Given parameters, recommends top restaurants for user that fit given criteria.
+
+    Inputs:
+        user_id (str)
+        words (str)
+        time_start (str)
+        time_end (str)
+        zipcode (str)
+        rating (str)
+        price_low (str)
+        price_high (str)
+        try_new (bool)
+    
+    Outputs:
+        pandas df of top restaurants in order and relevant information
     '''
     if try_new:
         user_words = find_user_words(user_id)
@@ -35,6 +40,14 @@ def recommend(user_id, words = None, time_start = None, time_end = None, zipcode
 
 def find_user_words(user_id):
     '''
+    Extracts tags associated with user's prior eating history for use in
+        search criteria for try_new recommendation
+
+    Inputs:
+        user_id (str)
+    
+    Outputs:
+        String of words and tags associated with user's eating history separated by spaces.
     '''
     f = open(USER_DATABASE_FILENAME, 'rb')
     df = p.load(f)
@@ -50,19 +63,22 @@ def find_user_words(user_id):
 
 def gen_query(words = None, time_start = None, time_end = None, zipcode = None, rating = None, price_low = None, price_high = None, try_new = False):
     '''
+    Constructs SQL query given user parameters.
+
     Inputs:
-        db_fname (str): string indicating db filename
         words (str)
         time_start (str)
         time_end (str)
         zipcode (str)
         rating (str)
-        price (str)
+        price_low (str)
+        price_high (str)
         try_new (bool)
+    
+    Outputs:
+        String representing the query to be made.
     '''
     query = 'SELECT * FROM rest_info'
-
-
     
     where_args = []
 
@@ -139,11 +155,11 @@ def gen_query(words = None, time_start = None, time_end = None, zipcode = None, 
         if include_word_query and non_word_param:
             word_args += ' AND '
 
-    # limit is 10 if no words provided, if words provided see comment below
+    # For efficiency, set limit for rows queried from database
     # if words:
     #     limit = get_limit()
     # else:
-    #     limit = 10
+    #     limit = 30
 
     # Assemble completed query
     query += word_args + ' AND '.join(where_args) + ' ORDER BY bayes' #' DESC LIMIT ' + limit + ';'
@@ -177,14 +193,12 @@ def process_query(query):
     df = pd.read_sql_query(query, db)
     db.close()
 
-    # Remove stray duplicate columns
+    # Remove stray duplicate columns and change column types for grouping
     df = df.loc[:,~df.columns.duplicated()]
-
     df.drop('word', axis=1, inplace=True, errors='ignore')
-
-    # take df, summarize by rest_name (get all the tags into like a list or something in one column, maybe just add strings),
-    # write function to cmopare user input words to the tags, produce column for number of overlaps
     df['id'] = pd.to_numeric(df['id'])
+
+    # For each restaurant, count number of tags matching search criteria
     df['tag_overlaps'] = 1
     output_cols = ['id', 'rest_name', 'phone', 'street', 'city', 'zipcode', 'bayes', 'vio_occ', 'time_start', 'time_end', 'risk_val', 'rating', 'price']
     df = df.groupby(output_cols)['tag_overlaps'].count().reset_index() # right now the only words found are the words that are searched for, somehow need to get all the words
@@ -196,5 +210,5 @@ def process_query(query):
     # Sort using three conditions 1. Rounded bayes, 2. tag overlaps, and 3. bayes (non-rounded)
     df.sort_values(['rounded_bayes', 'tag_overlaps', 'bayes'], ascending=False, inplace=True)
 
-    return df
+    return df.head(30)
 
