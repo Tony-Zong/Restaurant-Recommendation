@@ -88,7 +88,7 @@ def func(pct, allvals):
 
 def func2(pct, allvals):
     '''
-    Formatting for percentage and orders in function "pie"
+    Formatting for percentage and orders in function "costs"
     '''
     absolute = int(np.round(pct/100.*np.sum(allvals)))
     return "{:.1f}%(${:d})".format(pct, absolute)
@@ -109,38 +109,68 @@ def get_subset(df , user , start_date , end_date):
     return subset_df
 
 
-def pie(df , user , start_date , end_date):
+def freq(df , user , start_date , end_date):
     '''
     Returns a pie chart that summarizes how often the diner eats each type of food 
     (such as Asian food, Mexican food, etc.)
     '''
     subset_df = get_subset(df , user , start_date , end_date)
+    subset_df = subset_df.reset_index()
+    subset_df = subset_df[['cuisine']].value_counts().rename_axis('cuisine').reset_index(name='counts')
     if start_date != None and end_date != None:
-        title = 'User Eating History by Cuisine Type from' + ' ' + \
+        title = 'Percent and Number of User Entries by Cuisine Type from' + ' ' + \
                     start_date.strftime("%b %d %Y") + ' to ' + \
                     end_date.strftime("%b %d %Y")
     elif start_date == None and end_date != None:
-        title = 'User Eating History by Cuisine Type before' + ' ' + \
+        title = 'Percent and Number of User Entries by Cuisine Type before' + ' ' + \
                     end_date.strftime("%b %d %Y")
     elif start_date != None and end_date == None:
-        title = 'User Eating History by Cuisine Type after' + ' ' + \
+        title = 'Percent and Number of User Entries by Cuisine Type after' + ' ' + \
                     start_date.strftime("%b %d %Y")
     elif start_date == None and end_date == None:
-        title = 'User Eating History by Cuisine Type'
-    #pie = df.plot.pie(y = 'num_orders' , title = title, \
-                        #legend = False, ylabel = '' ,
-                        #labels = df.loc[:,"cuisine"],  \
-                        #autopct = lambda pct: func(pct,df.loc[:,"num_orders"]))
-    #plt.show()
-    
+        title = 'Percent and Number of User Entries by Cuisine Type'
+    pie = subset_df.plot.pie(y = 'counts' , title = title, \
+                        legend = False, ylabel = '' ,
+                        labels = subset_df.loc[:,"cuisine"],  \
+                        autopct = lambda pct: func(pct,subset_df.loc[:,"counts"]))
+    plt.show()
+    return pie
 
 def pref(df , user ,  start_date , end_date):
     '''
     Returns a bar chart summarizing the ratings a user gives to each type of food.
     '''
+    # get subset of dataframe based on username and start/end date
+    duplicate_indices = {}
     subset_df = get_subset(df , user , start_date , end_date)
+    subset_df = subset_df.reset_index()
+    # finds indexes where duplicate restaraunts and maps them to rest key
+    for i , row in enumerate(subset_df.duplicated(subset=['rest'] , keep = False)):
+        if row is True:
+            rest = subset_df.iloc[i]['rest']
+            if rest not in duplicate_indices.keys():
+                duplicate_indices[rest] = [i]
+            else:
+                i_list = duplicate_indices[rest]
+                i_list.append(i)
+                duplicate_indices[rest] = i_list
+    # adds a row to df of average of ratings for same rest
+    for rest , i_list in duplicate_indices.items():
+        sum_ratings = 0
+        for i in i_list:
+            rating = subset_df.iloc[i]['user_rating']
+            sum_ratings += rating
+        avg_rating = sum_ratings / len(i_list)
+        to_append = {'user': user, 'date': 'N/A', 'rest': rest, \
+                    'cuisine': subset_df.iloc[i]['cuisine'], \
+                    'user_rating': avg_rating, 'cost': 'N/A'} 
+        subset_df = subset_df.append(to_append, ignore_index = True)
+    # removes all rows of a given rest besides the row of average rating
+    for rest , i_list in duplicate_indices.items():
+        for i in i_list:
+            subset_df = subset_df.drop(index = i)
+    # actual dataviz construction
     fig = plt.figure()
-    #return subset_df.duplicated(subset=['rest'] , keep = False)
     cuisine = subset_df.loc[:,"cuisine"]
     ratings = subset_df.loc[:,"user_rating"]
     plt.bar(cuisine , ratings)
@@ -160,15 +190,17 @@ def pref(df , user ,  start_date , end_date):
         plt.title('User Ratings by Cuisine Type')               
     fig.autofmt_xdate()
     plt.show()
-    
+    return fig
+
 
 def costs(df , user , start_date , end_date):
     '''
     Returns a pie chart estimating total spending by cuisine for a user.
     '''
     subset_df = get_subset(df , user , start_date , end_date)
+    subset_df = subset_df.reset_index()
     cuisine_cost_df =  subset_df.loc[:, subset_df.columns!='user_rating'].groupby(['user', 'cuisine']).sum()
-    #return cuisine_cost_df
+    cuisine_cost_df = cuisine_cost_df.reset_index()
     if start_date != None and end_date != None:
         title = 'User Spending by Cuisine Type from' + ' ' + \
                     start_date.strftime("%b %d %Y") + ' to ' + \
@@ -182,9 +214,11 @@ def costs(df , user , start_date , end_date):
     elif start_date == None and end_date == None:
         title = 'User Spending by Cuisine Type'
     pie = cuisine_cost_df.plot.pie(y = 'cost' , title = title,  legend = False, \
-                        ylabel = '' , labels = subset_df.loc[:,'cuisine'], \
-                        autopct = lambda pct: func2(pct,df.loc[:,'cost']))
+                        ylabel = '' , labels = cuisine_cost_df['cuisine'] ,
+                        autopct = lambda pct: func2(pct,cuisine_cost_df.loc[:,'cost']))
+    
     plt.show()
+    return pie
 
 
 def all_viz(df , user , start_date , end_date):
@@ -192,17 +226,16 @@ def all_viz(df , user , start_date , end_date):
     Returns all three types of visualizations listed above and stores as a pdf
     in user's repository.
     '''
-    # orders by cuisine
-    pie1 = pie(df , user , start_date , end_date)
-
-    #user spending
-    pie2 = costs(df , user , start_date , end_date)
-
-
-    
+    # orders by cuisine type
+    fig1 = freq(df , user , start_date , end_date)
+    # user spending by cuisine type
+    fig2 = costs(df , user , start_date , end_date)
+    # user ratings by cuisine type
+    fig3 = pref(df , user , start_date , end_date)
+    # saving PDF of visualizations in UI repository
     pp = PdfPages('dataviz_' + user + '.pdf')
-    pp.savefig(pie1.figure)
-    pp.savefig(pie2.figure)
+    pp.savefig(fig1.figure)
+    pp.savefig(fig2.figure)
     pp.savefig(fig3)
     pp.close()
     
