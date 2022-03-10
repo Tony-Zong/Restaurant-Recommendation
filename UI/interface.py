@@ -18,7 +18,7 @@ def find_user_info():
             \nIf you are a new user, type "yes" otherwise input "no" to try again""")
         new_user = input()
         if new_user == 'no':
-            exits, userID = find_user_info()
+            exists = find_user_info()
         elif new_user == 'yes':
             exists = (False, userID)
         else:
@@ -94,6 +94,8 @@ If for either start or end date you would like it to not have bounds just press 
         if end_check > start_check:
             print("\nThe end date preceds the start date, please try again")
             get_date()
+    df.all_viz(userID, start_check, end_check)
+    print("\nThe data was successfully added to the directory.")
     #get the data visualisation based on start_check and end_check
     #put the print statement of data being successfully visualised
 
@@ -298,9 +300,14 @@ def get_cuisine():
     Gets the cuisine for the meal entry. Returns a string of the cuisine
     '''
     print("\nInput the cuising for this meal entry. (See below for cuisine options and input it as listed)")
-    cuisine_options = d.get_tags()
+    cuisine_options = df.ALL_TAGS_EDIT
+    list_cuisines = ''
+    for index, option in enumerate(cuisine_options):
+        if index % 10 == 0:
+            list_cuisines += "\n"
+        list_cuisines += option + ", "
     #find a more succint way of showing cuisine options
-    print(cuisine_options)
+    print(list_cuisines[:-2])
     #doesn't have the cusine options outputting
     cuisine = input()
     if cuisine in cuisine_options:
@@ -470,10 +477,10 @@ def main():
         new_entry(userID)
     else:
         looking_for(userID)
-    something_else = something_else
-    while something_else:
-        looking_for()
-        something_else = something_else()
+    something = something_else()
+    while something:
+        looking_for(userID)
+        something = something_else()
 
 if __name__ == "__main__":
     main()
