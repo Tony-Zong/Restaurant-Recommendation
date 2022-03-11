@@ -8,7 +8,14 @@ This is the group project repository for CMSC 12200. The project aims to create 
 * The project is based on the restaurants in Chicago 
 
 ## Software Description 
+The application provides a text-based user-interface for storing information about user eating history, providing useful data visualization for users to understand their eating habits, and providing restaurant recommendations to users based on search parameters and eating history. A focus is placed on restaurants in the greater Chicago area. The interface is currently based in terminal.
 
+Upon application start-up, users register a user id of their choosing, which is then associated with their eating history. Users then input the date, cuisine, restaurant name, cost, and personal rating of previous restaurant visit(s). This data is stored for use in data visualization and restaurant recommendation, and is retained for future uses of the application. 
+
+Users are then given the option of requesting "Standard" or "Try Something New" restaurant recommendations, along with desired search parameters including keywords, opening times, minimum star rating, price, etc. In the former, recommendations are based soley upon search parameters at the time of the request. In the latter, the user's eating history is considered alongside search parameters to recommend restaurants that differ from what the user has eaten recently. 10 recommendations are initially made, with an additional 20 recommendations given if desired. Recommendations are initially given as a list of restaurant names, after which users may request further information about the restaurants including address, hours, price, and rating.
+
+## Running the Application
+From the `Restaurant-Recommendation` directory, run the follwing command to access the user interface: `python3 UI/interface.py`. From there, follow the prompts to create or enter existing user id, enter user eating history, and request restaurant recommendations.
 
 ## Description of the files 
 
@@ -46,13 +53,13 @@ This is the group project repository for CMSC 12200. The project aims to create 
 
 ### `UI` folder 
 
-`rest_db.db`: 
+`rest_db.db`: SQL database storing all information associated with restaurants for possible recommendation. Consists of two tables. `rest_info` holds restaurant information to be displayed any time information is requested. `words_table` stores the culinary tags and words associated with the restaurant, to be used for keyword searches.
 
-`dataviz_final.py`: 
+`dataviz_final.py`: script providing data visualization as prompted by `interface.py`, displays visualizations in window and writes to pdf in the directory. Also holds functions for storage of user data. 
 
-`recommendation.py`: script providing back-end functions to interface.py, specifically recommendation functions that return top restaurants based on search parameters along with relevant information
+`recommendation.py`: script providing back-end functions to `interface.py`, specifically recommendation functions that return top restaurants based on search parameters along with relevant information
 
-`interface.py`: 
+`interface.py`: provides the text-based user interface for the application, with input dictated by keyboard input to the terminal
 
 ### `archive` folder
 
@@ -86,15 +93,15 @@ In the end, we chose to use a somewhat complicated random time interval distribu
 
 Then, we merged the Yelp data (`data_processing/yelp_data.pickle`) with the inspection data (`data_processing/health-inspections.zip`, `data_processing/inspection_data.pkl`) and got this data frame (`data_processing/yelp_and_inspection.pickle`). The merging is done in `data_processing/merge_inspection.py`. 
 
-Then we cleaned this data frame (see `data_processing/clean_df.py`) and get the final data frame (`data_processing/clean_df.pickle`).
+Then we cleaned this data frame (see `data_processing/clean_df.py`) to get the final data frame (`data_processing/clean_df.pickle`).
 
 Next, we created the tables for the database (see `data_processing/split_table.py`). See `data_processing/words_table.csv`, `data_processing/rest_info.csv` for the two tables in .csv format. We also have them in .pickle format as well in the `data_processing` folder. 
 
-Then, we created the database (`rest_db.db`) for reastaurant recommendation (see `data_processing/create_rest_db.sql`).
+Then, we created the database (`UI/rest_db.db`) for restaurant recommendation (see `data_processing/create_rest_db.sql`).
 
 While doing that, we have one of our team members working on the data visualization feature (see `dataviz.py`).
 
-Then, we start developing the recommendation algorithm (see `UI/recommendation.py`). It has two parts. One is the standard recommendation, which provides recommendations soley based on the one-time preference of the user. The other one is Try Something New, which will also connects with the data frame that stores the user's eating history and then provide recommendations that's different from what they ate recently. 
+Then, we start developing the recommendation algorithm (see `UI/recommendation.py`). It has two parts. One is the standard recommendation, which provides recommendations soley based on the one-time preference of the user provided at the time of request. The other is Try Something New, which also connects with the data frame that stores the user's eating history and provides recommendations that are different from what they ate recently. Broadly, recommendation algorithm calculates a bayesian average for the entire set of restaurants based on star rating and number of reviews. For each request, the bayesian average is weighted alongside the number of keywords that match search parameters. Restaurants are then sorted based on these criteria to provide the top 10 (or 30) restaurant recommendations.
 
 In the meantime, another team member works on the implementation of the UI (see `UI/interface.py`) and iteratively updates it as `UI/recommendation.py` and `dataviz.py` are updated. 
 

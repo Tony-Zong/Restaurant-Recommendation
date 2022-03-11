@@ -26,8 +26,10 @@ def scrape(csv_filename, all_rest = {}):
         name_str = url[5:]
         name_lst = name_str.split('-')
         name = ''
+
         for name_seg in name_lst:
             name += (name_seg[0].upper() + name_seg[1:] + ' ')
+
         rest_name = name.strip()
         if rest_name in all_rest:
             continue
@@ -35,10 +37,13 @@ def scrape(csv_filename, all_rest = {}):
         # use cnt to add another level of random stops
         if cnt % 15 == 0:
             time.sleep(random.random()*10)
+
         if cnt % 25 == 0:
             time.sleep(random.random()*15)
+
         complete_url = 'https://www.yelp.com' + url
         rand_num = random.random()*15 + 5
+
         # random time interval between each consecutive requests
         time.sleep(rand_num)
 
@@ -46,11 +51,14 @@ def scrape(csv_filename, all_rest = {}):
         r = requests.get(complete_url)
         html_doc = r.text.encode('utf-8')
         soup = bs4.BeautifulSoup(html_doc, "html5lib")
+
         rest_dict = sa.get_info(soup, url)
         if rest_dict is None:
             return 'Scraping has been stopped. Please see the printing result above to know where it ends.'
+
         all_rest[rest_name] = all_rest.get(rest_name, {})
         all_rest[rest_name] = rest_dict
+        
         cnt += 1
 
         # automatically update `data.pickle`

@@ -30,15 +30,20 @@ def get_tag_table(pickle_file):
 
     f = open(pickle_file, 'rb')
     df = p.load(f)
+
     tags_ids= df['id'].tolist()
     tags_list = df['tags'].tolist()
+
     all_tags = []
     all_ids = []
+
     tags_info = pd.DataFrame(columns = ['id', 'word'])
+
     for index, tags in enumerate(tags_list):
         for tag in tags:
             all_tags.append(tag.lower())
             all_ids.append(tags_ids[index])
+
     tags_info['id'] = all_ids
     tags_info['word'] = all_tags
 
@@ -54,16 +59,21 @@ def get_word_table(pickle_file):
 
     f = open(pickle_file, 'rb')
     df = p.load(f)
+
     words_ids= df['id'].tolist()
     words_list = df['words'].tolist()
+
     all_words = []
     all_ids = []
+
     words_info = pd.DataFrame(columns = ['id', 'word'])
+
     for index, words in enumerate(words_list):
         for word in words:
             if bool(re.match(r'^[a-zA-Z]+$', word)) and len(word)>1:
                 all_words.append(word)
                 all_ids.append(words_ids[index])
+
     words_info['id'] = all_ids
     words_info['word'] = all_words
 
@@ -80,12 +90,15 @@ def combine_tables(tag_table_file, word_table_file):
 
     f1 = open(tag_table_file, 'rb')
     f2 = open(word_table_file, 'rb')
+
     tag_table = p.load(f1)
     word_table = p.load(f2)
+
     words_table = pd.concat([tag_table, word_table], ignore_index=True)
     f3 = open('words_table.pickle', 'wb')
     pickle.dump(words_table, f3, pickle.HIGHEST_PROTOCOL)
     pickle_to_csv('words_table.pickle', 'words_table.csv')
+    
     f1.close()
     f2.close()
     f3.close()

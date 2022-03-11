@@ -35,9 +35,11 @@ def get_tags(csv):
     all_tags = set()
     f = open(csv, 'rb')
     all_rest = p.load(f)
+    
     for rest in all_rest.values():
        for tag in rest['tags']:
            all_tags.add(tag)
+
     return all_tags
 
 
@@ -104,12 +106,16 @@ def get_subset(df , user , start_date , end_date):
     if start_date != None and end_date != None:
         subset_df = df.loc[(df['user'] == user) & (df['date'] \
                                 >= start_date) & (df['date'] <= end_date)]
+
     elif start_date == None and end_date != None:
         subset_df = df.loc[(df['user'] == user) & (df['date'] <= end_date)]
+
     elif start_date != None and end_date == None:
         subset_df = df.loc[(df['user'] == user) & (df['date'] >= start_date)]
+
     elif start_date == None and end_date == None:
         subset_df = df.loc[df['user'] == user]
+
     return subset_df
 
 
@@ -121,22 +127,28 @@ def freq(df , user , start_date , end_date):
     subset_df = get_subset(df , user , start_date , end_date)
     subset_df = subset_df.reset_index()
     subset_df = subset_df[['cuisine']].value_counts().rename_axis('cuisine').reset_index(name='counts')
+
     if start_date != None and end_date != None:
         title = 'Percent and Number of User Entries by Cuisine Type from' + ' ' + \
                     start_date.strftime("%b %d %Y") + ' to ' + \
                     end_date.strftime("%b %d %Y")
+
     elif start_date == None and end_date != None:
         title = 'Percent and Number of User Entries by Cuisine Type before' + ' ' + \
                     end_date.strftime("%b %d %Y")
+
     elif start_date != None and end_date == None:
         title = 'Percent and Number of User Entries by Cuisine Type after' + ' ' + \
                     start_date.strftime("%b %d %Y")
+
     elif start_date == None and end_date == None:
         title = 'Percent and Number of User Entries by Cuisine Type'
+
     pie = subset_df.plot.pie(y = 'counts' , title = title, \
                         legend = False, ylabel = '' ,
                         labels = subset_df.loc[:,"cuisine"],  \
                         autopct = lambda pct: func(pct,subset_df.loc[:,"counts"]))
+
     plt.show()
     return pie
 
@@ -148,6 +160,7 @@ def pref(df , user ,  start_date , end_date):
     duplicate_indices = {}
     subset_df = get_subset(df , user , start_date , end_date)
     subset_df = subset_df.reset_index()
+
     # finds indexes where duplicate restaraunts and maps them to rest key
     for i , row in enumerate(subset_df.duplicated(subset=['rest'] , keep = False)):
         if row is True:
@@ -158,6 +171,7 @@ def pref(df , user ,  start_date , end_date):
                 i_list = duplicate_indices[rest]
                 i_list.append(i)
                 duplicate_indices[rest] = i_list
+
     # adds a row to df of average of ratings for same rest
     for rest , i_list in duplicate_indices.items():
         sum_ratings = 0
@@ -169,29 +183,37 @@ def pref(df , user ,  start_date , end_date):
                     'cuisine': [subset_df.iloc[i]['cuisine']], \
                     'user_rating': [avg_rating], 'cost': ['N/A']})
         subset_df = pd.concat([subset_df, to_append], ignore_index = True)
+
     # removes all rows of a given rest besides the row of average rating
     for rest , i_list in duplicate_indices.items():
         for i in i_list:
             subset_df = subset_df.drop(index = i)
+
     # actual dataviz construction
     fig = plt.figure()
     cuisine = subset_df.loc[:,"cuisine"]
     ratings = subset_df.loc[:,"user_rating"]
+
     plt.bar(cuisine , ratings)
     plt.ylabel('User Ratings (1-5)')
     plt.xlabel('Cuisine Type')
+
     if start_date != None and end_date != None:
         plt.title('User Ratings by Cuisine Type from' + ' ' + \
                     start_date.strftime("%b %d %Y") + ' to ' + \
                     end_date.strftime("%b %d %Y"))
+
     elif start_date == None and end_date != None:
         plt.title('User Ratings by Cuisine Type before' + ' ' + \
                     end_date.strftime("%b %d %Y"))
+
     elif start_date != None and end_date == None:
         plt.title('User Ratings by Cuisine Type after' + ' ' + \
                     start_date.strftime("%b %d %Y"))
+
     elif start_date == None and end_date == None:
-        plt.title('User Ratings by Cuisine Type')               
+        plt.title('User Ratings by Cuisine Type')      
+
     fig.autofmt_xdate()
     plt.show()
     return fig
@@ -204,18 +226,23 @@ def costs(df , user , start_date , end_date):
     subset_df = get_subset(df , user , start_date , end_date)
     cuisine_cost_df =  subset_df.loc[:, subset_df.columns!='user_rating'].groupby(['user', 'cuisine']).sum()
     cuisine_cost_df = cuisine_cost_df.reset_index()
+
     if start_date != None and end_date != None:
         title = 'User Spending by Cuisine Type from' + ' ' + \
                     start_date.strftime("%b %d %Y") + ' to ' + \
                     end_date.strftime("%b %d %Y")
+
     elif start_date == None and end_date != None:
         title = 'User Spending by Cuisine Type before' + ' ' + \
                     end_date.strftime("%b %d %Y")
+
     elif start_date != None and end_date == None:
         title = 'User Spending by Cuisine Type after' + ' ' + \
                     start_date.strftime("%b %d %Y")
+
     elif start_date == None and end_date == None:
         title = 'User Spending by Cuisine Type'
+
     pie = cuisine_cost_df.plot.pie(y = 'cost' , title = title,  legend = False, \
                         ylabel = '' , labels = cuisine_cost_df['cuisine'] ,
                         autopct = lambda pct: func2(pct,cuisine_cost_df.loc[:,'cost']))

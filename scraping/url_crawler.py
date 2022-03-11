@@ -14,6 +14,7 @@ def get_zipcodes(csv_file):
     with open(csv_file, 'r') as f:
         for row in csv.reader(f):
             zipcodes.append(row[0])
+            
     return zipcodes
     
 # Search Yelp for every restaurant in every zipcode
@@ -35,6 +36,7 @@ def urls(starting_url, zipcodes):
             req = requests.get(search_url + '&start=' + str(start_page))
             soup = BeautifulSoup(req.content, 'html.parser')
             biz_tags = soup.find_all('div', class_ = 'businessName__09f24__EYSZE display--inline-block__09f24__fEDiJ border-color--default__09f24__NPAKY')
+
             if biz_tags:
                 for biz_tag in biz_tags:
                     url = biz_tag.find('a')['href']
@@ -44,6 +46,7 @@ def urls(starting_url, zipcodes):
                         restaurant_urls.add(url)
             else:
                 reached_last_page = True
+
     return restaurant_urls
 
 
