@@ -111,4 +111,5 @@ Then, we start developing the recommendation algorithm (see `UI/recommendation.p
 In the meantime, another team member works on the implementation of the UI (see `UI/interface.py`) and iteratively updates it as `UI/recommendation.py` and `UI/dataviz_final.py` are updated. 
 
 ## Remarks 
+Due to numerous difficulties in scraping (ips blocked and potentially blacklisted), the dataset of Chicago restaurants is not a complete representation of those found on Yelp.
 
