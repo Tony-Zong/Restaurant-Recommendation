@@ -199,7 +199,6 @@ def costs(df , user , start_date , end_date):
     Returns a pie chart estimating total spending by cuisine for a user.
     '''
     subset_df = get_subset(df , user , start_date , end_date)
-    subset_df = subset_df.reset_index()
     cuisine_cost_df =  subset_df.loc[:, subset_df.columns!='user_rating'].groupby(['user', 'cuisine']).sum()
     cuisine_cost_df = cuisine_cost_df.reset_index()
     if start_date != None and end_date != None:
