@@ -19,6 +19,8 @@ Users are also given the option of requesting "Standard" or "Try Something New" 
 ## Running the Application
 From the `Restaurant-Recommendation` directory, run the follwing command to access the user interface: `python3 UI/interface.py`. From there, follow the prompts to create or enter existing user id, enter user eating history, and request restaurant recommendations.
 
+Test user software is available under the following user ids: dylanwhite, tonyzong, tara, mattchen, niserbabiker, ocampili
+
 ## Description of the files 
 
 ### [`scraping`](https://github.com/Tony-Zong/Restaurant-Recommendation/tree/main/scraping) folder 
