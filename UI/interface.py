@@ -419,7 +419,7 @@ def get_try_new():
     new or False if they want something specific
     '''
     print("""\nInput 1 if you would like to get restaurant recomendations based on specific inputs
-Input 2 if you would like restaurant recommendations selected based on things you haven't tried yet""")
+Input 2 if you would like restaurant recommendations selected based on things you haven't tried in the last 60 days""")
     try_new = input()
 
     if try_new == '1':
