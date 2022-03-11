@@ -66,6 +66,9 @@ def find_user_words(user_id):
     user_words = list(df['rest'].unique()) + list(df['cuisine'].unique())
     user_words = [word.lower() for word in user_words]
 
+    if not user_words:
+        return None
+
     return ' '.join(user_words)
 
 
@@ -136,24 +139,26 @@ def gen_query(words = None, time_start = None, time_end = None, zipcode = None, 
 
     # Account for interactions between word arguments and non word arguments
     include_word_query = False
-    if words_used or try_new:
+    if words_used or (try_new and words):
         query += ' JOIN words_table ON rest_info.id == words_table.id'  
         include_word_query = True
-          
+        
     if include_word_query or non_word_param:
         query += ' WHERE '
         if include_word_query and non_word_param:
             word_args += ' AND '
 
+    # If try_new, search for restaurants that do not match keywords from user eating history
+    if try_new and words:
+        word_args = 'rest_info.id NOT IN (SELECT rest_info.id FROM rest_info JOIN words_table ON rest_info.id == words_table.id WHERE' + word_args + ')'
+        # query = query.replace('*', 'rest_info.id')
+        # query = query.replace(' ORDER BY bayes', '')
+        # query = 'SELECT * FROM rest_info WHERE id NOT IN (' + query + ') ORDER BY bayes'
 
     # Assemble completed query
     query += word_args + ' AND '.join(where_args) + ' ORDER BY bayes' #' DESC LIMIT ' + limit + ';'
 
-    # If try_new, search for restaurants that do not match keywords from user eating history
-    if try_new:
-        query = query.replace('*', 'rest_info.id')
-        query = query.replace(' ORDER BY bayes', '')
-        query = 'SELECT * FROM rest_info WHERE id NOT IN (' + query + ') ORDER BY bayes'
+
 
     return query
 
