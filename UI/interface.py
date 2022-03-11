@@ -6,10 +6,12 @@ import recommendation as r
 import pandas as pd
 import pickle5 as p
 
+
 def load_pickle():
     f = open(df.DF_FILENAME, 'rb')
     user_info = p.load(f)
     return user_info
+
 
 def find_user_info():
     '''
@@ -35,6 +37,7 @@ def find_user_info():
         exists = (True, userID)
     return exists
 
+
 def looking_for(userID):
     '''
     Prompts the user to input what they are looking for and does what they request
@@ -43,7 +46,7 @@ def looking_for(userID):
     print("")
     print("""Input 1 if you want to submit a new eating entry
         \nInput 2 if you want a recommendation
-        \nInput 3 if you want to view the exisitng data on your eating habits""")
+        \nInput 3 if you want to view the existing data on your eating habits""")
     looking_for = input()
     if looking_for == '1':
         new_entry(userID)
@@ -57,6 +60,7 @@ def looking_for(userID):
     else:
         print("Invalid input, please try again")
         looking_for()
+
 
 def something_else():
     #WORKS
@@ -74,6 +78,7 @@ def something_else():
         wants_something = something_else()
     return wants_something
 
+
 def new_entry(userID):
     '''
     Creates a new entry for the user. Takes in the userID
@@ -86,6 +91,7 @@ def new_entry(userID):
     cuisine = get_cuisine()
     df.add_row(userID, date, restaurant, cuisine, user_rating, price)
     print('Your entry was successfully added')
+
 
 def get_data(userID):
     '''
@@ -107,6 +113,7 @@ If for either start or end date you would like it to not have bounds just press 
     #get the data visualisation based on start_check and end_check
     #put the print statement of data being successfully visualised
 
+
 def get_lower_date():
     #needs to be checked
     print("\nWhat date would you like the data to start from?")
@@ -120,6 +127,7 @@ def get_lower_date():
             start_check = get_lower_date()
     return start_check
 
+
 def get_upper_date():
     #needs to be checked
     print("\nWhat date would you like the data to end on?")
@@ -132,6 +140,7 @@ def get_upper_date():
             print("\nInvalid end date, please try again")
             end_check = get_upper_date()
     return end_check
+
 
 def get_recommendation(userID, try_new):
     #needs to be checked
@@ -154,6 +163,7 @@ def get_recommendation(userID, try_new):
     done = add_info(recs, starting_rec, final_rec)
     while not done[0]:
         done = add_info(recs, done[1], done[2])
+
 
 def add_info(recs, starting_rec, final_rec):
     #needs to be checked
@@ -245,6 +255,7 @@ If you are satisfied with the information press enter""")
         done = add_info(recs, starting_rec, final_rec)
     return done
 
+
 def print_recs(recs, starting_rec):
     #needs to be checked
     print("\nThese are the restaurants we reccomend:")
@@ -261,6 +272,7 @@ def print_recs(recs, starting_rec):
     if final_rec % 10 != 0:
         "\nThese are all the restaurants we can reccomend based on your inputs"
     return starting_rec, final_rec
+
 
 def get_try_new():
     #WORKS
@@ -280,6 +292,7 @@ Input 2 if you would like restaurant recommendations selected based on things yo
         print("\nInvalid input, please try again")
         wants_new = get_try_new()
     return wants_new
+
 
 def check_date(date):
     #WORKS
@@ -304,6 +317,7 @@ def check_date(date):
 The following functions are helpers for inputing a new entry
 '''
 
+
 def get_date():
     #WORKS
     '''
@@ -320,6 +334,7 @@ def get_date():
         checked = date_check
     return checked
 
+
 def get_restaurant():
     #WORKS
     '''
@@ -329,6 +344,7 @@ def get_restaurant():
     print("\nInput the name of the restaurant you ate at for this entry. (Press enter if N/A)")
     restaurant = input()
     return restaurant
+
 
 def get_price():
     #WORKS
@@ -349,6 +365,7 @@ def get_price():
         good_price = get_price()
     return good_price
 
+
 def get_user_rating():
     #works
     '''
@@ -367,12 +384,13 @@ def get_user_rating():
         good_user_rating = get_user_rating()
     return good_user_rating
     
+
 def get_cuisine():
     #NEEDS FIXING
     '''
     Gets the cuisine for the meal entry. Returns a string of the cuisine
     '''
-    print("\nInput the cuising for this meal entry. (See below for cuisine options and input it as listed)")
+    print("\nInput the cuisine for this meal entry. (See below for cuisine options and input it as listed)")
     cuisine_options = df.ALL_TAGS_EDIT
     list_cuisines = ''
     for index, option in enumerate(cuisine_options):
@@ -411,6 +429,7 @@ Input tags with a space in between or input suggest to get a list of suggested t
         final_tags = tags_words
     return final_tags
 
+
 def get_times():
     #WORKS
     '''
@@ -424,6 +443,7 @@ def get_times():
             print("\nThe closing time was earlier than the opening time, please try again")
             open_check, close_check = get_times()
     return open_check, close_check
+
 
 def get_open_time():
     #WORKS
@@ -442,6 +462,7 @@ Input in 24 hour format with leading 0s eg. 1400 for 2:00PM and 0700 for 7:00AM.
         print("\nInvalid time, please try again")
         open_check = get_open_time()	
     return open_check
+
 
 def get_close_time():
     #WORKS
@@ -462,6 +483,7 @@ If you want it to close after midnight, add additional hours to 2400 eg. 2700 fo
         close_check = get_close_time()
     return close_check
 
+
 def get_zipcode():
     #WORKS
     '''
@@ -478,6 +500,7 @@ def get_zipcode():
         print("\nInvalid zipcode, please try again")
         good_zipcode = get_zipcode()
     return good_zipcode
+
 
 def get_rating():
     #WORKS
@@ -497,6 +520,7 @@ Input an integer between 1 and 5""")
         good_rating = get_rating()
     return good_rating
 
+
 def get_price_range():
     #WORKS
     '''
@@ -513,6 +537,7 @@ def get_price_range():
             low_check, high_check = get_price_range()
     return low_check, high_check
 
+
 def get_low_price():  
     #WORKS
     print("\nWhat is the lowest price range you are looking for?")
@@ -526,6 +551,7 @@ def get_low_price():
         print("\nInvalid price, please try again")
         low_check = get_low_price()
     return low_check
+
 
 def get_high_price():
     #WORKS
@@ -541,6 +567,7 @@ def get_high_price():
         print("\nInvalid price, please try again")
         high_check = get_high_price()
     return high_check
+
 
 def main():
     #needs to be checked

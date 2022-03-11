@@ -50,13 +50,13 @@ This is the group project repository for CMSC 12200. The project aims to create 
 
 `dataviz_final.py`: 
 
-`recommendation.py`: 
+`recommendation.py`: script providing back-end functions to interface.py, specifically recommendation functions that return top restaurants based on search parameters along with relevant information
 
 `interface.py`: 
 
 ### `archive` folder
 
-Other files that we created during the development process. Theya re now archived. 
+Other files that we created during the development process. They are now archived. 
 
 
 
@@ -64,7 +64,7 @@ Other files that we created during the development process. Theya re now archive
 
 Originally, the data sources we were considering were Yelp and OpenTable. Yelp contains the info of the most restaurants, while OpenTable is a site for making reservations (and we originally wanted to provide info about this in our software). However, after we examined Opentable for hours, we concluded that it contains relatively little information we want (since it only has info for restaurants that's in its 'business network') and since it's also not very feasible to scrape, we decided to choose another data source; 
 
-Then, we looked for alternative data sources and decided to use the [Chicago Health Inspection data](https://www.kaggle.com/chicago/chi-restaurant-inspections). It contains information on health risk level and violations noted during the inspection for probably all the restaurants in the greater Chicago area. So presumbaly the restaurant coverage of this datset and Yelp would be approximatey the same. Also, health risk information would always be helpful for consumers.   
+Then, we looked for alternative data sources and decided to use the [Chicago Health Inspection data](https://www.kaggle.com/chicago/chi-restaurant-inspections). It contains information on health risk level and violations noted during the inspection for probably all the restaurants in the greater Chicago area. So presumably the restaurant coverage of this datset and Yelp would be approximatey the same. Also, health risk information would always be helpful for consumers.   
 
 Then we scraped the Yelp website for data about restaurants in the pan-Chicago area: 
 

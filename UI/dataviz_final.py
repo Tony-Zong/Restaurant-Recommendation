@@ -7,8 +7,11 @@ import numpy as np
 from matplotlib.backends.backend_pdf import PdfPages
 from datetime import date , timedelta
 from os.path import exists
+import os
 
-DF_FILENAME = 'user_info.pickle'
+DATA_DIR = os.path.dirname(__file__)
+USER_DATABASE_FILENAME = os.path.join(DATA_DIR, 'user_info.pickle')
+# DF_FILENAME = 'user_info.pickle' #REMOVE THIS LINE
 
 ALL_TAGS_EDIT = ['African', 'American (New)', 'American (Traditional)',
  'Argentine', 'Asian Fusion', 'Australian', 'Barbeque', 'Brazilian', 'Breakfast & Brunch',
@@ -43,7 +46,7 @@ def check_user_exists(username):
     Check whether the inputted username already exists.
     '''
 
-    f = open(DF_FILENAME, 'rb')
+    f = open(USER_DATABASE_FILENAME, 'rb')
     user_info = p.load(f)
     return username in user_info['user'].unique()
 
@@ -53,9 +56,9 @@ def check_user_info_df_exists():
     Check that user_info.pickle exists. If not, create one.
     '''
 
-    if not exists(DF_FILENAME): 
+    if not exists(USER_DATABASE_FILENAME): 
         df = pd.DataFrame(columns = ['user','date','rest','cuisine','user_rating','cost'])
-        f = open(DF_FILENAME, 'wb')
+        f = open(USER_DATABASE_FILENAME, 'wb')
         pickle.dump(df, f, pickle.HIGHEST_PROTOCOL)
         f.close()
 
@@ -65,7 +68,7 @@ def add_row(user, date, rest, cuisine, user_rating, cost):
     Update the user_info data frame when the user inputs information about a meal.
     '''
 
-    f = open(DF_FILENAME, 'rb')
+    f = open(USER_DATABASE_FILENAME, 'rb')
     user_info = p.load(f)
 
     to_append = pd.DataFrame({'user': [user], 'date': [date], 'rest': [rest], 'cuisine': [cuisine], \
@@ -73,7 +76,7 @@ def add_row(user, date, rest, cuisine, user_rating, cost):
 
     user_info = pd.concat([user_info, to_append], ignore_index = True)
 
-    f2 = open(DF_FILENAME, 'wb')
+    f2 = open(USER_DATABASE_FILENAME, 'wb')
     pickle.dump(user_info, f2, pickle.HIGHEST_PROTOCOL)
     f2.close()
 

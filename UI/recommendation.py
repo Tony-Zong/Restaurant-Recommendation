@@ -141,16 +141,14 @@ def gen_query(words = None, time_start = None, time_end = None, zipcode = None, 
     if rating:
         where_args.append('rating >= ' + rating)
         non_word_param = True
-
-    if price_low:
-        where_args.append('price <= ' + price_low)
+    
+    if price_low or price_high:
         where_args.append('price != ' + '-1')
         non_word_param = True
-
-    if price_high:
-        where_args.append('price <= ' + price_high)
-        where_args.append('price != ' + '-1')
-        non_word_param = True
+        if price_low:
+            where_args.append('price <= ' + price_low)
+        if price_high:
+            where_args.append('price <= ' + price_high)
 
     # Account for interactions between word arguments and non word arguments
     include_word_query = False
