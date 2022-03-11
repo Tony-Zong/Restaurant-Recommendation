@@ -1,7 +1,6 @@
 import datetime
 from datetime import date as dt
 import dataviz_final as df
-import dataviz as d
 import recommendation as r
 import pandas as pd
 import pickle5 as p
@@ -184,7 +183,7 @@ def get_recommendation(userID, try_new):
     recs = r.recommend(userID, tags, open_time, close_time, zipcode, rating, price_low, price_high, try_new)
 
     if len(recs) == 0:
-        print("""The search terms you inputted were too narrow and we couldn't find any matching restaurants."""")
+        print("The search terms you inputted were too narrow and we couldn't find any matching restaurants.")
 
     else:
         starting_rec = 0
@@ -609,7 +608,7 @@ def get_rating():
     print("""\nWhat is the minimum rating you would like for the restaurants? 
 Input a number between 1 and 5, a decimal may be entered""")
     rating = input()
-    if rating == ''
+    if rating == '':
         good_rating = None
 
     else:
