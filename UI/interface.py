@@ -46,7 +46,6 @@ def looking_for(userID):
     '''
     Prompts the user to input what they are looking for and does what they request
     '''
-    #needs to be checked
     print("")
     print("""Input 1 if you want to submit a new eating entry
         \nInput 2 if you want a recommendation
@@ -72,7 +71,6 @@ def looking_for(userID):
 
 
 def something_else():
-    #WORKS
     '''
     Asks the user if they want to do something. Returns True if yes and False if no
     '''
@@ -96,7 +94,6 @@ def new_entry(userID):
     '''
     Creates a new entry for the user. Takes in the userID
     '''
-    #needs to be checked
     date = get_date()
     restaurant = get_restaurant()
     price = get_price()
@@ -212,8 +209,13 @@ If you are satisfied with the information press enter""")
 
     elif add_info_input.isnumeric():
         if int(add_info_input) == 0:
-            starting_rec, final_rec = print_recs(recs, final_rec)
-            done = add_info(recs, starting_rec, final_rec)
+            if final_rec >= len(rec):
+                print("\nThese are all the restaurants we can reccomend based on your inputs")
+                done = (True, starting_rec, final_rec)
+            
+            else:
+                starting_rec, final_rec = print_recs(recs, final_rec)
+                done = add_info(recs, starting_rec, final_rec)
 
         elif int(add_info_input) in possible_rest_nums:
             current_rest = final_rec - 11 + int(add_info_input)
@@ -320,7 +322,7 @@ def print_recs(recs, starting_rec):
     
     else:
         print("\nThese are the restaurants we recommend:")
-        
+
     final_rec = starting_rec
 
     for row in recs:
