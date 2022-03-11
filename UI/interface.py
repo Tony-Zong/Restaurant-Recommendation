@@ -7,6 +7,9 @@ import pickle5 as p
 
 
 def load_pickle():
+    '''
+    Opens the pickle file containing the user information and returns it
+    '''
     f = open(df.DF_FILENAME, 'rb')
     user_info = p.load(f)
     return user_info
@@ -17,7 +20,6 @@ def find_user_info():
     Prompts the user for their userID. If the userID exists in the database, returns True and their userID.
     If the userID doesn't exist in the database returns False and their userID
     '''
-    #needs to be checked
     print("Input your user ID")
     userID = input()
     matching_info = df.check_user_exists(userID)
@@ -313,12 +315,16 @@ If you are satisfied with the information press enter""")
 
 def print_recs(recs, starting_rec):
     #needs to be checked
-    print("\nThese are the restaurants we recommend:")
+    if starting_rec >= len(recs):
+        print("\nThese are all the restaurants we can reccomend based on your inputs")
+    
+    else:
+        print("\nThese are the restaurants we recommend:")
+        
     final_rec = starting_rec
 
     for row in recs:
         if final_rec >= len(recs):
-            print("\nThese are all the restaurants we can reccomend based on your inputs")
             break
 
         restaurant = recs.iloc[final_rec]["rest_name"]
