@@ -1,4 +1,5 @@
 import datetime
+from datetime import date as dt
 import dataviz_final as df
 import dataviz as d
 import recommendation as r
@@ -91,7 +92,7 @@ If for either start or end date you would like it to not have bounds just press 
     start_check = get_lower_date()
     end_check = get_upper_date()
     if end_check != None and start_check != None:
-        if end_check > start_check:
+        if end_check < start_check:
             print("\nThe end date preceds the start date, please try again")
             get_date()
     df.all_viz(userID, start_check, end_check)
@@ -218,8 +219,8 @@ def check_date(date):
             year = int(date[6:10])
             if month >= 1 and month <= 12:
                 if day >= 1 and day <= 31:
-                    date_object = datetime.datetime(year, month, day)
-                    if date_object <= datetime.datetime.now():
+                    date_object = datetime.date(year, month, day)
+                    if date_object <= dt.today():
                         return date_object
     else:
         return None
@@ -257,15 +258,12 @@ def get_restaurant():
 def get_price():
     #WORKS
     '''
-    Gets the price of the meal for the entry that will be added. Returns a float or None
-    if N/A
+    Gets the price of the meal for the entry that will be added. Returns a float
     '''
     print("""\nInput the price of the meal you ate for this entry. 
-(Only input numbers with two decimal points eg. 10.30 for $10.30 or press enter if N/A)""")
+(Only input numbers with two decimal points eg. 10.30 for $10.30)""")
     price = input()
-    if price == '':
-        good_price = None
-    elif len(price) >= 3:
+    if len(price) >= 3:
         if price[len(price) - 3] == '.' and price[len(price) - 2:].isnumeric() and price[:len(price) - 3].isnumeric():
             good_price = float(price)
         else:
