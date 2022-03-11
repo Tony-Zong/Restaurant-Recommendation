@@ -645,16 +645,16 @@ def check_date(date):
             month = int(date[0:2])
             day = int(date[3:5])
             year = int(date[6:10])
+            try:
+                date_object = datetime.date(year, month, day)
 
-            if month >= 1 and month <= 12:
-                if day >= 1 and day <= 31:
-                    try:
-                        date_object = datetime.date(year, month, day)
+                if date_object <= dt.today():
+                    return date_object
+                else:
+                    return None
 
-                        if date_object <= dt.today():
-                            return date_object
-                    except:
-                        return None
+            except:
+                return None
 
     else:
         return None
