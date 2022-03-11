@@ -65,7 +65,6 @@ def find_user_words(user_id):
     # Extract word list from cuisines and restaurant names for search
     user_words = list(df['rest'].unique()) + list(df['cuisine'].unique())
     user_words = [word.lower() for word in user_words]
-    print(' '.join(user_words))
 
     return ' '.join(user_words)
 
@@ -169,7 +168,6 @@ def process_query(query):
     Outputs:
         pandas df of top restaurants in order and relevant information
     '''
-    print(query)
     # Read SQL output to pandas df
     db = sqlite3.connect(DATABASE_FILENAME)
     df = pd.read_sql_query(query, db)
