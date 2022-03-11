@@ -105,7 +105,7 @@ While doing that, we have one of our team members working on the data visualizat
 
 Then, we start developing the recommendation algorithm (see `UI/recommendation.py`). It has two parts. One is the standard recommendation, which provides recommendations soley based on the one-time preference of the user provided at the time of request. The other is Try Something New, which also connects with the data frame that stores the user's eating history and provides recommendations that are different from what they ate recently. Broadly, recommendation algorithm calculates a bayesian average for the entire set of restaurants based on star rating and number of reviews. For each request, the bayesian average is weighted alongside the number of keywords that match search parameters. Restaurants are then sorted based on these criteria to provide the top 10 (or 30) restaurant recommendations.
 
-In the meantime, another team member works on the implementation of the UI (see `UI/interface.py`) and iteratively updates it as `UI/recommendation.py` and `dataviz.py` are updated. 
+In the meantime, another team member works on the implementation of the UI (see `UI/interface.py`) and iteratively updates it as `UI/recommendation.py` and `UI/dataviz_final.py` are updated. 
 
 ## Remarks 
 
