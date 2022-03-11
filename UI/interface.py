@@ -37,7 +37,7 @@ def load_pickle():
     '''
     Opens the pickle file containing the user information and returns it
     '''
-    f = open(df.DF_FILENAME, 'rb')
+    f = open(df.USER_DATABASE_FILENAME, 'rb')
     user_info = p.load(f)
     return user_info
 
@@ -161,18 +161,16 @@ def get_user_rating():
     '''
     print("\nInput your rating of this meal entry. (Input an integer between 1-5)")
     user_rating = input()
-
     try:
         float_user_rating = float(user_rating)
-        if float_user_rating >= 1 and float_user_rating <= 5:
-                good_user_rating = float_user_rating
+        if float_user_rating >= 1.0 and float_user_rating <= 5.0:
+            good_user_rating = float_user_rating
+        else:
+            ("\nInvalid rating, please try again")
+            good_user_rating = get_user_rating()
 
     except:
         ("\nInvalid rating, please try again")
-        good_user_rating = get_user_rating()
-
-    else:
-        print("\nInvalid rating, please try again")
         good_user_rating = get_user_rating()
 
     return good_user_rating
@@ -447,6 +445,7 @@ Input tags with a space in between or input suggest to get a list of suggested t
         #prints the possible cuisine as tag options
         cuisine_options = df.ALL_TAGS_EDIT
 
+        list_cuisines = ""
         for index, option in enumerate(cuisine_options):
             if index % 10 == 0:
                 list_cuisines += "\n"
