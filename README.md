@@ -107,3 +107,5 @@ Then, we start developing the recommendation algorithm (see `UI/recommendation.p
 
 In the meantime, another team member works on the implementation of the UI (see `UI/interface.py`) and iteratively updates it as `UI/recommendation.py` and `dataviz.py` are updated. 
 
+## Remarks 
+
