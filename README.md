@@ -21,49 +21,49 @@ From the `Restaurant-Recommendation` directory, run the follwing command to acce
 
 ## Description of the files 
 
-### `scraping` folder 
+### [`scraping`](https://github.com/Tony-Zong/Restaurant-Recommendation/tree/main/scraping) folder 
 
-`cook_zips.csv`: CSV that stores all the zipcodes in Cook County. We got it from [Zillow](https://www.zillow.com/browse/homes/il/cook-county/). The zipcodes will be used when we crawl Yelp for restaurant URLs. 
+[`cook_zips.csv`](https://github.com/Tony-Zong/Restaurant-Recommendation/blob/main/scraping/cook_zips.csv): CSV that stores all the zipcodes in Cook County. We got it from [Zillow](https://www.zillow.com/browse/homes/il/cook-county/). The zipcodes will be used when we crawl Yelp for restaurant URLs. 
 
-`url_crawler.py`: script that crawls the Yelp website to get the URLs for restaurants. We crawl Yelp by first specifying the zipcode in the searching URL and then going through all the pages under this zipcode and extracting the links to restaurants. 
+[`url_crawler.py`](https://github.com/Tony-Zong/Restaurant-Recommendation/blob/main/scraping/url_crawler.py): script that crawls the Yelp website to get the URLs for restaurants. We crawl Yelp by first specifying the zipcode in the searching URL and then going through all the pages under this zipcode and extracting the links to restaurants. 
 
-`restaurant_urls3.csv`: CSV that stores all the restaurant URLs. 
+[`restaurant_urls3.csv`](https://github.com/Tony-Zong/Restaurant-Recommendation/blob/main/scraping/restaurant_urls3.csv): CSV that stores all the restaurant URLs. 
 
-`scraping_all.py`: script that scrapes the information about each restaurant in each's website page. The information includes phone, address, website, num_review, hours, tags, rating, price, words (words in the restaurant name). 
+[`scraping_all.py`](https://github.com/Tony-Zong/Restaurant-Recommendation/blob/main/scraping/scraping_all.py): script that scrapes the information about each restaurant in each's website page. The information includes phone, address, website, num_review, hours, tags, rating, price, words (words in the restaurant name). 
 
-`scraping_final.py`: script that goes through all the restaurant URLs, scrapes each page, and stores all the information into a master dictionary. The dictionary is then dumped into `yelp_data.pickle`, which is now stored in the `data_processing` folder. 
+[`scraping_final.py`](https://github.com/Tony-Zong/Restaurant-Recommendation/blob/main/scraping/scraping_final.py): script that goes through all the restaurant URLs, scrapes each page, and stores all the information into a master dictionary. The dictionary is then dumped into `yelp_data.pickle`, which is now stored in the `data_processing` folder. 
 
-`numbered_urls.py`: script that finds all the URLs among the first 1050 that ends with a number. We needed to re-scrape these due to some reasons that has to do with how the scraping function works. We then iterated through the URLs in this file and scraped these restaurants again. 
+[`numbered_urls.py`](https://github.com/Tony-Zong/Restaurant-Recommendation/blob/main/scraping/numbered_urls.py): script that finds all the URLs among the first 1050 that ends with a number. We needed to re-scrape these due to some reasons that has to do with how the scraping function works. We then iterated through the URLs in this file and scraped these restaurants again. 
 
-### `data_processing` folder 
+### [`data_processing`](https://github.com/Tony-Zong/Restaurant-Recommendation/tree/main/data_processing) folder 
 
-`process_inspection_data.ipynb`: script that loads in the inspection data and conducts some basic data pre-processing.  
+[`process_inspection_data.ipynb`](https://github.com/Tony-Zong/Restaurant-Recommendation/blob/main/data_processing/process_inspection_data.ipynb): script that loads in the inspection data and conducts some basic data pre-processing.  
 
-`inspection_data.pkl`: Pandas data frame that stores the inspection data.
+[`inspection_data.pkl`](https://github.com/Tony-Zong/Restaurant-Recommendation/blob/main/data_processing/inspection_data.pkl): Pandas data frame that stores the inspection data.
 
-`merge_inspection.py`: script that reads in the inspection data and merge it with the Yelp data. 
+[`merge_inspection.py`](https://github.com/Tony-Zong/Restaurant-Recommendation/blob/main/data_processing/merge_inspection.py): script that reads in the inspection data and merge it with the Yelp data. 
 
-`yelp_and_inspection.pickle`: Pandas data frame that stores the merged data. 
+[`yelp_and_inspection.pickle`](https://github.com/Tony-Zong/Restaurant-Recommendation/blob/main/data_processing/yelp_and_inspection.pickle): Pandas data frame that stores the merged data. 
 
-`clean_df.py`: scripts that further cleans the data frame for it to be ready to be split into the tables for the database. 
+[`clean_df.py`](https://github.com/Tony-Zong/Restaurant-Recommendation/blob/main/data_processing/clean_df.py): scripts that further cleans the data frame for it to be ready to be split into the tables for the database. 
 
-`clean_df.pickle`: Pandas data frame that stores the cleaned, finalized data frame. 
+[`clean_df.pickle`](https://github.com/Tony-Zong/Restaurant-Recommendation/blob/main/data_processing/clean_df.pickle): Pandas data frame that stores the cleaned, finalized data frame. 
 
-`split_table.py`: scripts that splits the cleaned data frame into two tables. `words_table.csv` has two columns: `id` for restaurnt id; `word` for tags and words in the restaurant name. `rest_info.csv` stores the rest of the information about each restaurant (`rest_name`, `phone`, `street`, `city`, `zipcode`, `website`, `num_review`, `bayes`, `vio_occ`, `time_start`, `time_end`, `risk_val`, `rating`, `price`). 
+[`split_table.py`](https://github.com/Tony-Zong/Restaurant-Recommendation/blob/main/data_processing/split_table.py): scripts that splits the cleaned data frame into two tables. `words_table.csv` has two columns: `id` for restaurnt id; `word` for tags and words in the restaurant name. `rest_info.csv` stores the rest of the information about each restaurant (`rest_name`, `phone`, `street`, `city`, `zipcode`, `website`, `num_review`, `bayes`, `vio_occ`, `time_start`, `time_end`, `risk_val`, `rating`, `price`). 
 
-`create_rest_db.sql`: SQL that specifies the scheme of the database. 
+[`create_rest_db.sql`](https://github.com/Tony-Zong/Restaurant-Recommendation/blob/main/data_processing/create_rest_db.sql): SQL that specifies the scheme of the database. The resulting databse is now located in the `UI` folder. 
 
-### `UI` folder 
+### [`UI`](https://github.com/Tony-Zong/Restaurant-Recommendation/tree/main/UI) folder 
 
-`rest_db.db`: SQL database storing all information associated with restaurants for possible recommendation. Consists of two tables. `rest_info` holds restaurant information to be displayed any time information is requested. `words_table` stores the culinary tags and words associated with the restaurant, to be used for keyword searches.
+[`rest_db.db`](https://github.com/Tony-Zong/Restaurant-Recommendation/blob/main/UI/rest_db.db): SQL database storing all information associated with restaurants for possible recommendation. Consists of two tables. `rest_info` holds restaurant information to be displayed any time information is requested. `words_table` stores the culinary tags and words associated with the restaurant, to be used for keyword searches.
 
-`dataviz_final.py`: script providing data visualization as prompted by `interface.py`, displays visualizations in window and writes to pdf in the directory. Also holds functions for storage of user data. 
+[`dataviz_final.py`](https://github.com/Tony-Zong/Restaurant-Recommendation/blob/main/UI/dataviz_final.py): script providing data visualization as prompted by `interface.py`, displays visualizations in window and writes to pdf in the directory. Also holds functions for storage of user data. 
 
-`recommendation.py`: script providing back-end functions to `interface.py`, specifically recommendation functions that return top restaurants based on search parameters along with relevant information
+[`recommendation.py`](https://github.com/Tony-Zong/Restaurant-Recommendation/blob/main/UI/recommendation.py): script providing back-end functions to `interface.py`, specifically recommendation functions that return top restaurants based on search parameters along with relevant information
 
-`interface.py`: provides the text-based user interface for the application, with input dictated by keyboard input to the terminal
+[`interface.py`](https://github.com/Tony-Zong/Restaurant-Recommendation/blob/main/UI/interface.py): provides the text-based user interface for the application, with input dictated by keyboard input to the terminal
 
-### `archive` folder
+### [`archive`](https://github.com/Tony-Zong/Restaurant-Recommendation/tree/main/archive) folder
 
 Other files that we created during the development process. They are now archived. 
 
@@ -105,7 +105,7 @@ While doing that, we have one of our team members working on the data visualizat
 
 Then, we start developing the recommendation algorithm (see `UI/recommendation.py`). It has two parts. One is the standard recommendation, which provides recommendations soley based on the one-time preference of the user provided at the time of request. The other is Try Something New, which also connects with the data frame that stores the user's eating history and provides recommendations that are different from what they ate recently. Broadly, recommendation algorithm calculates a bayesian average for the entire set of restaurants based on star rating and number of reviews. For each request, the bayesian average is weighted alongside the number of keywords that match search parameters. Restaurants are then sorted based on these criteria to provide the top 10 (or 30) restaurant recommendations.
 
-In the meantime, another team member works on the implementation of the UI (see `UI/interface.py`) and iteratively updates it as `UI/recommendation.py` and `dataviz.py` are updated. 
+In the meantime, another team member works on the implementation of the UI (see `UI/interface.py`) and iteratively updates it as `UI/recommendation.py` and `UI/dataviz_final.py` are updated. 
 
 ## Remarks 
 
