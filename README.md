@@ -68,6 +68,9 @@ From the `Restaurant-Recommendation` directory, run the follwing command to acce
 Other files that we created during the development process. They are now archived. 
 
 
+## Flow Chart 
+
+![application_flow_chart](https://github.com/Tony-Zong/Restaurant-Recommendation/blob/main/application_flow_chart.jpg)
 
 ## Progress 
 
