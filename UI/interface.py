@@ -167,9 +167,9 @@ def get_user_rating():
         if float_user_rating >= 1 and float_user_rating <= 5:
                 good_user_rating = float_user_rating
 
-        except:
-            print("\nInvalid rating, please try again")
-        good_rating = get_rating()
+    except:
+        ("\nInvalid rating, please try again")
+        good_user_rating = get_user_rating()
 
     else:
         print("\nInvalid rating, please try again")
@@ -567,7 +567,7 @@ Input a number between 1 and 5, a decimal may be entered""")
 
         except:
             print("\nInvalid rating, please try again")
-        good_rating = get_rating()
+            good_rating = get_rating()
 
     return good_rating
 
