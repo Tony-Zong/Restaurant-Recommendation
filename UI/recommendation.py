@@ -65,6 +65,7 @@ def find_user_words(user_id):
     # Extract word list from cuisines and restaurant names for search
     user_words = list(df['rest'].unique()) + list(df['cuisine'].unique())
     user_words = [word.lower() for word in user_words]
+    print(' '.join(user_words))
 
     return ' '.join(user_words)
 
@@ -94,34 +95,18 @@ def gen_query(words = None, time_start = None, time_end = None, zipcode = None, 
     words_used = False
     word_args = ''
     if words:
+        word_checks = []
 
-        if try_new:
-            word_checks = []
+        for word in words.split():
+            if len(word) > 2:
+                word_checks.append('word LIKE \'%' + word + '%\'')
 
-            for word in words.split():
-                if len(word) > 2:
-                    word_checks.append('word NOT LIKE \'%' + word.lower() + '%\'')
+        word_args = '(' + ' OR '.join(word_checks) + ')'
 
-            word_args = '(' + ' AND '.join(word_checks) + ')'
-
-            if not word_checks:
-                word_args = ''
-            else:
-                words_used = True
-
+        if not word_checks:
+            word_args = ''
         else:
-            word_checks = []
-
-            for word in words.split():
-                if len(word) > 2:
-                    word_checks.append('word LIKE \'%' + word + '%\'')
-
-            word_args = '(' + ' OR '.join(word_checks) + ')'
-
-            if not word_checks:
-                word_args = ''
-            else:
-                words_used = True
+            words_used = True
     
     non_word_param = False
 
@@ -165,6 +150,12 @@ def gen_query(words = None, time_start = None, time_end = None, zipcode = None, 
     # Assemble completed query
     query += word_args + ' AND '.join(where_args) + ' ORDER BY bayes' #' DESC LIMIT ' + limit + ';'
 
+    # If try_new, search for restaurants that do not match keywords from user eating history
+    if try_new:
+        query = query.replace('*', 'rest_info.id')
+        query = query.replace(' ORDER BY bayes', '')
+        query = 'SELECT * FROM rest_info WHERE id NOT IN (' + query + ') ORDER BY bayes'
+
     return query
 
 
@@ -178,6 +169,7 @@ def process_query(query):
     Outputs:
         pandas df of top restaurants in order and relevant information
     '''
+    print(query)
     # Read SQL output to pandas df
     db = sqlite3.connect(DATABASE_FILENAME)
     df = pd.read_sql_query(query, db)
