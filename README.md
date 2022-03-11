@@ -101,7 +101,7 @@ Next, we created the tables for the database (see `data_processing/split_table.p
 
 Then, we created the database (`UI/rest_db.db`) for restaurant recommendation (see `data_processing/create_rest_db.sql`).
 
-While doing that, we have one of our team members working on the data visualization feature (see `dataviz.py`).
+While doing that, we have one of our team members working on the data visualization feature (see `UI/dataviz_final.py`). `dataviz_final.py` has two primary purposes: to construct a dataframe out of user-entered eating history and information, and then to subsequently construct 3 types of visualizations to return to the user and store in a PDF. The data frame of user information is stored in `UI/user_info.pickle`. An earlier version of this implementation can be found in the `archive` folder called `data_viz.py`. We discarded it since the way it stores the user data is not tidy. 
 
 Then, we start developing the recommendation algorithm (see `UI/recommendation.py`). It has two parts. One is the standard recommendation, which provides recommendations soley based on the one-time preference of the user provided at the time of request. The other is Try Something New, which also connects with the data frame that stores the user's eating history and provides recommendations that are different from what they ate recently. Broadly, recommendation algorithm calculates a bayesian average for the entire set of restaurants based on star rating and number of reviews. For each request, the bayesian average is weighted alongside the number of keywords that match search parameters. Restaurants are then sorted based on these criteria to provide the top 10 (or 30) restaurant recommendations.
 
