@@ -19,7 +19,7 @@ def find_user_info():
     If the userID doesn't exist in the database returns False and their userID
     '''
     #needs to be checked
-    print("Input your user ID (formatted as firstnamelastname with your corresponding information)")
+    print("Input your user ID")
     userID = input()
     matching_info = df.check_user_exists(userID)
 
@@ -183,13 +183,17 @@ def get_recommendation(userID, try_new):
 
     recs = r.recommend(userID, tags, open_time, close_time, zipcode, rating, price_low, price_high, try_new)
 
-    starting_rec = 0
-    starting_rec, final_rec = print_recs(recs, starting_rec)
+    if len(recs) == 0:
+        print("""The search terms you inputted were too narrow and we couldn't find any matching restaurants."""")
 
-    done = add_info(recs, starting_rec, final_rec)
+    else:
+        starting_rec = 0
+        starting_rec, final_rec = print_recs(recs, starting_rec)
 
-    while not done[0]:
-        done = add_info(recs, done[1], done[2])
+        done = add_info(recs, starting_rec, final_rec)
+
+        while not done[0]:
+            done = add_info(recs, done[1], done[2])
 
 
 def add_info(recs, starting_rec, final_rec):
@@ -603,17 +607,19 @@ def get_rating():
     Returns the rating as a string or None if N/A
     '''
     print("""\nWhat is the minimum rating you would like for the restaurants? 
-Input an integer between 1 and 5""")
+Input a number between 1 and 5, a decimal may be entered""")
     rating = input()
-
-    if rating.isnumeric() and float(rating) >= 1 and float(rating) <= 5:
-        good_rating = rating
-
-    elif rating == '':
+    if rating == ''
         good_rating = None
 
     else:
-        print("\nInvalid rating, please try again")
+        try:
+            float_rating = float(rating)
+            if float_rating >= 1 and float_rating <= 5:
+                good_rating = rating
+
+        except:
+            print("\nInvalid rating, please try again")
         good_rating = get_rating()
 
     return good_rating
