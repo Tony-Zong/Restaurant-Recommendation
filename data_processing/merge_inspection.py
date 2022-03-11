@@ -41,10 +41,8 @@ df_final.reset_index(inplace=True)
 df_final.rename(columns={'index': 'id'}, inplace=True)
 df_final['city'] = df_final['city'].str.replace(',','')
 
-# Check if same value is present in both dataframes... they are
-#print(df_yelp['street'].str.contains('3357 N LINCOLN AVE').sum())
-#print(df_inspection['street'].str.contains('3357 N LINCOLN AVE').sum())
 
+# Store in pickle
 f = open('yelp_and_inspection.pickle', 'wb')
 pickle5.dump(df_final, f, pickle5.HIGHEST_PROTOCOL)
 f.close()

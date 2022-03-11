@@ -1,4 +1,5 @@
 # Import libraries
+import datetime
 import os
 import sqlite3
 from tokenize import Ignore
@@ -53,8 +54,15 @@ def find_user_words(user_id):
     df = p.load(f)
     f.close()
 
-    df = df[df['user'] == user_id]
+    # Account for info from last 60 days only
+    today = datetime.date.today()
+    df['date'] = pd.to_datetime(df['date']).dt.date
+    df['time_difference'] = today - df['date']
+
+    # Filter by user id and time
+    df = df[(df['user'] == user_id) & (df['time_difference'] < datetime.timedelta(days=60))]
     
+    # Extract word list from cuisines and restaurant names for search
     user_words = list(df['rest'].unique()) + list(df['cuisine'].unique())
     user_words = [word.lower() for word in user_words]
 
@@ -119,11 +127,11 @@ def gen_query(words = None, time_start = None, time_end = None, zipcode = None, 
 
     # Build query for other paramaters
     if time_start:
-        where_args.append('time_start >= ' + time_start)
+        where_args.append('time_start <= ' + time_start)
         non_word_param = True
 
     if time_end:
-        where_args.append('time_end <= ' + time_end)
+        where_args.append('time_end >= ' + time_end)
         non_word_param = True
 
     if zipcode:
@@ -155,26 +163,11 @@ def gen_query(words = None, time_start = None, time_end = None, zipcode = None, 
         if include_word_query and non_word_param:
             word_args += ' AND '
 
-    # For efficiency, set limit for rows queried from database
-    # if words:
-    #     limit = get_limit()
-    # else:
-    #     limit = 30
 
     # Assemble completed query
     query += word_args + ' AND '.join(where_args) + ' ORDER BY bayes' #' DESC LIMIT ' + limit + ';'
 
     return query
-
-
-# def get_limit():
-#     '''
-#     '''
-#     # FIND LENGTH OF WORDS TABLE (15360), get average tags per word (15360 / 3183) (maybe add 1), MULTUPLY THIS BY NUMBER OF TAGS THAT THEY INPUT
-#     db = sqlite3.connect(DATABASE_FILENAME)
-#     num_tags = 0
-#     num_rest = 0
-#     return str(200)
 
 
 def process_query(query):
@@ -187,7 +180,6 @@ def process_query(query):
     Outputs:
         pandas df of top restaurants in order and relevant information
     '''
-    print(query)
     # Read SQL output to pandas df
     db = sqlite3.connect(DATABASE_FILENAME)
     df = pd.read_sql_query(query, db)

@@ -5,10 +5,6 @@ import pandas as pd
 import pickle5
 import re
 
-
-# TO DO: CHECK STREET VALUES AND CONVERT TO NAN CORRECTLY, split hours to opening and clsoing, convert risk to numbers, 
-
-
 # Load df
 f = open('yelp_and_inspection.pickle', 'rb')
 df = pickle5.load(f)
@@ -44,8 +40,7 @@ m = df['rating'].sum() / df['num_review'].sum()
 df['bayes'] = (df['rating'] * df['num_review'] + C * m) / (df['num_review'] + C)
 
 
-# Split hours to opening and closing
-# If unknown, set time start and end 
+# Split hours to opening and closing 
 def split_start(row):
     if row['hours'] == 'Unkown' or row['hours'] == 'Unknown':
         return 'Unknown'
@@ -54,13 +49,11 @@ def split_start(row):
 def split_end(row):
     if row['hours'] == 'Unkown' or row['hours'] == 'Unknown':
         return 'Unknown'
-    #print(row['hours'].split(' - '))
     return row['hours'].split(' - ')[1]
 
 def convert_start(row):
     if row['time_start'] == 'Unknown':
         return None
-    #print(tuple(row['time_start'].split(' ')))
     time, am = tuple(row['time_start'].split(' '))
     time = int(time.replace(':', ''))
     if am == 'PM':
@@ -93,7 +86,6 @@ df['vio_occ'] = df['violations'].notnull()
 
 
 # Convert Risk to numbers and make numeric (only one integer in each value, 1 is high risk 3 is low)
-# might not need to do this
 def output_risk_val(row):
     if not row['risk']:
         return None
@@ -104,7 +96,6 @@ def output_risk_val(row):
 
 df['risk_val'] = df.apply(lambda row: output_risk_val(row), axis=1)
 
-print(df.loc[703])
 
 #Clean up
 df.drop(['weighted', 'state', 'risk', 'violations'], axis=1, inplace=True)
