@@ -162,10 +162,10 @@ def pref(df , user ,  start_date , end_date):
             rating = subset_df.iloc[i]['user_rating']
             sum_ratings += rating
         avg_rating = sum_ratings / len(i_list)
-        to_append = {'user': user, 'date': 'N/A', 'rest': rest, \
-                    'cuisine': subset_df.iloc[i]['cuisine'], \
-                    'user_rating': avg_rating, 'cost': 'N/A'} 
-        subset_df = subset_df.append(to_append, ignore_index = True)
+        to_append = pd.DataFrame({'user': [user], 'date': ['N/A'], 'rest': [rest], \
+                    'cuisine': [subset_df.iloc[i]['cuisine']], \
+                    'user_rating': [avg_rating], 'cost': ['N/A']})
+        subset_df = pd.concat([subset_df, to_append], ignore_index = True)
     # removes all rows of a given rest besides the row of average rating
     for rest , i_list in duplicate_indices.items():
         for i in i_list:

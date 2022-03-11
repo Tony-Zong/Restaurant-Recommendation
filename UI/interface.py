@@ -4,6 +4,12 @@ import dataviz_final as df
 import dataviz as d
 import recommendation as r
 import pandas as pd
+import pickle5 as p
+
+def load_pickle():
+    f = open(df.DF_FILENAME, 'rb')
+    user_info = p.load(f)
+    return user_info
 
 def find_user_info():
     '''
@@ -35,7 +41,6 @@ def looking_for(userID):
     '''
     #needs to be checked
     print("")
-    print("Welcome, " + userID + "!")
     print("""Input 1 if you want to submit a new eating entry
         \nInput 2 if you want a recommendation
         \nInput 3 if you want to view the exisitng data on your eating habits""")
@@ -87,6 +92,7 @@ def get_data(userID):
     Creates data visualisation for the user. Takes in the userID.
     '''
     #needs to be checked
+    user_info = load_pickle()
     print("""\nYou will be asked to input a range of dates on which you would like data on. 
 If for either start or end date you would like it to not have bounds just press enter""")
     start_check = get_lower_date()
@@ -95,7 +101,8 @@ If for either start or end date you would like it to not have bounds just press 
         if end_check < start_check:
             print("\nThe end date preceds the start date, please try again")
             get_date()
-    df.all_viz(userID, start_check, end_check)
+    print("Please close all pop up windows before proceeding")
+    df.all_viz(user_info, userID, start_check, end_check)
     print("\nThe data was successfully added to the directory.")
     #get the data visualisation based on start_check and end_check
     #put the print statement of data being successfully visualised
@@ -126,7 +133,7 @@ def get_upper_date():
             end_check = get_upper_date()
     return end_check
 
-def get_recomendation(userID, try_new):
+def get_recommendation(userID, try_new):
     #needs to be checked
     '''
     Gets a reccomendation for the user. Takes in the userID and a boolean True 
@@ -145,8 +152,8 @@ def get_recomendation(userID, try_new):
     starting_rec = 0
     starting_rec, final_rec = print_recs(recs, starting_rec)
     done = add_info(recs, starting_rec, final_rec)
-    while not done:
-        done = add_info(recs, starting_rec, final_rec)
+    while not done[0]:
+        done = add_info(recs, done[1], done[2])
 
 def add_info(recs, starting_rec, final_rec):
     #needs to be checked
@@ -154,20 +161,85 @@ def add_info(recs, starting_rec, final_rec):
 Input the integer corresponding for the restaurant if yes.
 If you would like to get the subsequent ten restaurants input 0
 If you are satisfied with the information press enter""")
-    add_info = input()
-    possible_rest_nums = list(range(1, 10+1))
-    if not add_info.isnumeric() or add_info != '':
-        print("\nInvalid input, please try again")
-        done = add_info(recs, starting_rec, final_rec)
-    elif add_info == '':
-        done = True
-    elif add_info == '0':
-        starting_rec, final_rec = print_recs(recs, starting_rec)
-        done = add_info(recs, starting_rec, final_rec)
-    elif int(add_info) in possible_rest_nums:
-        current_rest = final_rec - int(add_info)
-        print(recs.iloc[current_rest])
-        done = False
+    add_info_input = input()
+    possible_rest_nums = list(range(1, 11))
+    if add_info_input == '':
+        done = (True, starting_rec, final_rec)
+    elif add_info_input.isnumeric():
+        if int(add_info_input) == 0:
+            starting_rec, final_rec = print_recs(recs, final_rec)
+            done = add_info(recs, starting_rec, final_rec)
+        elif int(add_info_input) in possible_rest_nums:
+            current_rest = final_rec - 11 + int(add_info_input)
+            default_val = {None, '', 'Unknown', "Not available", '-1'}
+            if recs.iloc[current_rest]["rest_name"] in default_val:
+                rest_name = 'Unknown'
+            else:
+                rest_name = recs.iloc[current_rest]["rest_name"]
+            if recs.iloc[current_rest]["phone"] in default_val:
+                phone_num = 'Unknown'
+            else:
+                phone_num = recs.iloc[current_rest]["phone"]
+            if recs.iloc[current_rest]["street"] in default_val:
+                street = 'Unknown'
+            else:
+                street = recs.iloc[current_rest]["street"]
+            if recs.iloc[current_rest]["zipcode"] in default_val:
+                zipcode = 'Unknown'
+            else:
+                zipcode = str(recs.iloc[current_rest]["zipcode"])
+            if recs.iloc[current_rest]["city"] in default_val:
+                city = 'Unknown'
+            else:
+                city = recs.iloc[current_rest]["city"]
+            if recs.iloc[current_rest]["time_start"] in default_val:
+                open_time = 'Unknown'
+            else:
+                df_open_time = str(recs.iloc[current_rest]["time_start"])
+                if int(df_open_time) < 1000:
+                    first_half = df_open_time[:1]
+                    second_half = df_open_time[1:]
+                elif int(df_open_time) == 2400:
+                    first_half = '00'
+                    second_half = '00'
+                else:
+                    first_half = df_open_time[:2]
+                    second_half = df_open_time[2:]
+                open_time = str(first_half) + ":" + str(second_half)
+            if recs.iloc[current_rest]["time_end"] in default_val:
+                close_time = 'Unknown'
+            else:
+                df_close_time = str(recs.iloc[current_rest]["time_end"])
+                if int(df_close_time) < 1000:
+                    first_half = df_close_time[:1]
+                    second_half = df_close_time[1:]
+                elif int(df_close_time) == 2400:
+                    first_half = '00'
+                    second_half = '00'
+                elif int(df_close_time) > 2400:
+                    first_half = df_close_time[:2] - 24
+                    second_half = df_close_time[2:]
+                else:
+                    first_half = df_close_time[:2]
+                    second_hald = df_close_time[2:]
+                close_time = str(first_half) + ":" + str(second_half)
+            if recs.iloc[current_rest]["rating"] in default_val:
+                rating = 'Unknown'
+            else:
+                rating = str(recs.iloc[current_rest]["rating"])
+            
+            print("\nRestaurant name: " + rest_name)
+            print("Phone number: " + phone_num)
+            print("Street: " + street)
+            print('Zipcode: ' + zipcode)
+            print('City: ' + city)
+            print("Opening time: " + open_time)
+            print("Closing time: " + close_time)
+            print("Yelp rating: " + rating)
+            done = (False, starting_rec, final_rec)
+        else:
+            print("\nInvalid input, please try again")
+            done = add_info(recs, starting_rec, final_rec)
     else:
         print("\nInvalid input, please try again")
         done = add_info(recs, starting_rec, final_rec)
@@ -176,8 +248,11 @@ If you are satisfied with the information press enter""")
 def print_recs(recs, starting_rec):
     #needs to be checked
     print("\nThese are the restaurants we reccomend:")
-    final_rec = startin_rec
+    final_rec = starting_rec
     for row in recs:
+        if final_rec >= len(recs):
+            print("\nThese are all the restaurants we can reccomend based on your inputs")
+            break
         restaurant = recs.iloc[final_rec]["rest_name"]
         print(str(final_rec % 10 + 1) + ". " + restaurant)
         final_rec += 1
@@ -471,6 +546,7 @@ def main():
     #needs to be checked
     df.check_user_info_df_exists()
     existing_user, userID = find_user_info()
+    print("Welcome, " + userID + "!")
     if existing_user == False:
         print("\nAs a new user, you have to input an eating entry before proceeding")
         new_entry(userID)
