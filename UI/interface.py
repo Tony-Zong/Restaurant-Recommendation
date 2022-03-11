@@ -314,7 +314,7 @@ If you are satisfied with the information press enter""")
 
 def print_recs(recs, starting_rec):
     #needs to be checked
-    print("\nThese are the restaurants we reccomend:")
+    print("\nThese are the restaurants we recommend:")
     final_rec = starting_rec
 
     for row in recs:
