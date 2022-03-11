@@ -448,9 +448,9 @@ Input tags with a space in between or input suggest to get a list of suggested t
         cuisine_options = df.ALL_TAGS_EDIT
 
         for index, option in enumerate(cuisine_options):
-        if index % 10 == 0:
-            list_cuisines += "\n"
-        list_cuisines += option + ", "
+            if index % 10 == 0:
+                list_cuisines += "\n"
+            list_cuisines += option + ", "
 
         print(list_cuisines[:-2])
         final_tags = get_tags()
