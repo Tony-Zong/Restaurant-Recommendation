@@ -94,6 +94,7 @@ def new_entry(userID):
     '''
     Creates a new entry for the user. Takes in the userID
     '''
+    #gets all the user inputs from helper functions
     date = get_date()
     restaurant = get_restaurant()
     price = get_price()
@@ -108,7 +109,6 @@ def get_data(userID):
     '''
     Creates data visualisation for the user. Takes in the userID.
     '''
-    #needs to be checked
     user_info = load_pickle()
     print("""\nYou will be asked to input a range of dates on which you would like data on. 
 If for either start or end date you would like it to not have bounds just press enter""")
@@ -124,8 +124,6 @@ If for either start or end date you would like it to not have bounds just press 
     print("Please close all pop up windows before proceeding")
     df.all_viz(user_info, userID, start_check, end_check)
     print("\nThe data was successfully added to the directory.")
-    #get the data visualisation based on start_check and end_check
-    #put the print statement of data being successfully visualised
 
 
 def get_lower_date():
@@ -209,7 +207,7 @@ If you are satisfied with the information press enter""")
 
     elif add_info_input.isnumeric():
         if int(add_info_input) == 0:
-            if final_rec >= len(rec):
+            if final_rec >= len(recs):
                 print("\nThese are all the restaurants we can reccomend based on your inputs")
                 done = (True, starting_rec, final_rec)
             
