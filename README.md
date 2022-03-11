@@ -71,6 +71,7 @@ Other files that we created during the development process. They are now archive
 ## Flow Chart 
 
 ![application_flow_chart](https://github.com/Tony-Zong/Restaurant-Recommendation/blob/main/application_flow_chart.jpg)
+Notes: Green boxes represent printed statements and prompts, red boxes user input, and yellow boxes code processing user input. Slight changes may have been made to wording of printed statements.
 
 ## Progress 
 
@@ -113,3 +114,4 @@ In the meantime, another team member works on the implementation of the UI (see 
 ## Remarks 
 Due to numerous difficulties in scraping (ips blocked and potentially blacklisted), the dataset of Chicago restaurants is not a complete representation of those found on Yelp.
 
+To Prof. Wachs and TAs, thank you for a great quarter!
